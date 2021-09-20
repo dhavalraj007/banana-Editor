@@ -8,6 +8,9 @@ workspace "banana"
         "Release"
     }
 
+tdir = "bin/%{cfg.buildcfg}/%{prj.name}"
+odir = "bin-obj/%{cfg.buildcfg}/%{prj.name}"
+
 project "bananaEditor"
     location "bananaEditor"
     kind "ConsoleApp"
@@ -19,6 +22,9 @@ project "bananaEditor"
         "FatalWarnings"
     }
 
+    targetdir(tdir)
+    objdir(odir)
+    
     files
     {
         "%{prj.name}/src/**.h",

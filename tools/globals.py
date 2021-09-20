@@ -10,7 +10,6 @@ for x in platform.uname():
         PLATFORM = "win32"
 
 def IsWindows():
-    print(PLATFORM)
     return PLATFORM == "win32"
 def IsLinux():
     return PLATFORM == "linux"
