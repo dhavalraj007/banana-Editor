@@ -2,7 +2,9 @@
 .vs/
 .vscode/
 bin*/
+obj*/
 logs/
+*.tlog/
 
 # Files
 *.user
@@ -10,6 +12,12 @@ logs/
 *.xcworkspace/
 *.xcodeproj/
 *.vcxproj*
+*.recipe
 *.sln
+*.pdb
+*.obj
 *Makefile
 *.pyc
+*.log
+*.tlog
+*.lastbuildstate
