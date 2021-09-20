@@ -12,5 +12,5 @@ def IsWindows():
     return PLATFORM == "windows"
 def IsLinux():
     return PLATFORM == "linux"
-def IsWindows():
+def IsMac():
     return PLATFORM == "darwin"
