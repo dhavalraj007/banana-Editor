@@ -150,6 +150,10 @@ project "bananaEditor"
         {
             "BANANA_PLATFORM_LINUX"
         }
+        links
+        {
+            "SDL2"
+        }
     
     filter {"configurations:Debug"}
         

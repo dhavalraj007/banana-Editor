@@ -1,6 +1,6 @@
 import globals,subprocess,sys
 
-CONFIG = "release"
+CONFIG = "debug"
 
 if globals.IsWindows():
     VS_BUILD_PATH = "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\\MSBuild.exe"
