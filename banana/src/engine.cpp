@@ -1,12 +1,10 @@
 #include"engine.h"
 #include<iostream>
+#include"sdl2/SDL.h"
+
 
 namespace banana
 {
-    int add(int a,int b)
-    {
-        return a+b;
-    }
     void getInfo()
     {
 #ifdef BANANA_CONFIG_DEBUG
@@ -31,4 +29,30 @@ namespace banana
 #endif
 
     }
+
+    bool initialize()
+    {
+        bool ret = true;
+
+        if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        {
+            std::cout << "ERROR Initialzing SDL2: " << SDL_GetError() << std::endl;
+            ret = false;
+        }
+        else
+        {
+            SDL_version version;
+            SDL_VERSION(&version);
+            std::cout << "SDL " << (int32_t)version.major << "." << (int32_t)version.minor << "." << (int32_t)version.patch << std::endl;
+        }
+        return ret; 
+    }
+
+    void shutdown()
+    {
+        SDL_Quit();
+    }
+
+
+
 }

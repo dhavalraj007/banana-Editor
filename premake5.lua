@@ -10,6 +10,10 @@ workspace "banana"
 
 tdir = "bin/%{cfg.buildcfg}/%{prj.name}"
 odir = "bin-obj/%{cfg.buildcfg}/%{prj.name}"
+-- External Dependencies
+externals = {}
+externals["sdl2"] = "external/sdl2"
+
 
 
 project "banana"
@@ -28,8 +32,10 @@ project "banana"
     objdir(odir)
     sysincludedirs
     {
-        "%{prj.name}/include/banana"
+        "%{prj.name}/include/banana",
+        "%{externals.sdl2}/include"
     }
+
     files
     {
         "%{prj.name}/include/**.h",     --only this will be exposed to outer projects
@@ -115,6 +121,16 @@ project "bananaEditor"
         defines
         {
             "BANANA_PLATFORM_WINDOWS"
+        }
+
+        libdirs
+        {
+            "%{externals.sdl2}/lib"
+        }
+
+        links
+        {
+            "SDL2"
         }
     
     filter { "system:macosx","configurations:*"}

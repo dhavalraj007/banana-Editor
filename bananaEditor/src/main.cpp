@@ -5,9 +5,8 @@ int main()
 {
     std::cout << "Heyyya World" << std::endl;
     banana::getInfo();
-    int a = banana::add(10,5);
-    int b = banana::sub(10,5);
-    std::cout<<a<<" ,"<<b<<std::endl;
+    banana::initialize();
+    banana::shutdown();
 
     return 0;
 }
