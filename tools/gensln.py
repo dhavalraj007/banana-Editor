@@ -1,11 +1,14 @@
-import globals,subprocess
+import globals,subprocess,sys
 
+ret = 0
 if globals.IsWindows():
-    subprocess.call(["cmd.exe" ,"/c","premake\premake5","vs2019"])
+    ret = subprocess.call(["cmd.exe" ,"/c","premake\premake5","vs2019"])
 
 if globals.IsLinux():
-    subprocess.call(["premake/premake5.linux","gmake2"])
+    ret = subprocess.call(["premake/premake5.linux","gmake2"])
 
 if globals.IsMac():
-    subprocess.call(["premake/premake5","gmake2"])
-    subprocess.call(["premake/premake5","xcode4"])
+    ret = subprocess.call(["premake/premake5","gmake2"])
+    if ret==0:
+        subprocess.call(["premake/premake5","xcode4"])
+sys.exit(ret)
