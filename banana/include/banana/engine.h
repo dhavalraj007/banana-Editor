@@ -1,8 +1,36 @@
 #pragma once
 
+#include"core/window.h"
+
 namespace banana
 {   
-    void getInfo();
-    bool initialize();
-    void shutdown();
+    class Engine
+    {
+    public:
+        static Engine& Instance()
+        {
+            static Engine instance;             // may be this will be on the heap (if the Engine is on heap)
+            return instance;
+        }
+        ~Engine(){}
+        //Contains Main loop
+        void run();
+        inline void quit() { m_isRunning = false; }
+
+        core::Window m_Window;
+        
+        
+        Engine(Engine&) = delete;
+        Engine operator=(Engine&) = delete;
+    
+    private:
+        void getInfo();
+        //Initialize/Create Subsystems(SDL,Window)
+        [[nodiscard]] bool initialize();
+        //Shutdown Subsystems(SDL,window)
+        void shutdown();
+        Engine();
+
+        bool m_isRunning;
+    };
 }

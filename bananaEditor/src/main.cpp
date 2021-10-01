@@ -3,10 +3,10 @@
 
 int main()
 {
-    std::cout << "Heyyya World" << std::endl;
-    banana::getInfo();
-    banana::initialize();
-    banana::shutdown();
-
+    banana::Engine& engine = banana::Engine::Instance();
+    engine.run();
+    
+    std::cout << "Press ENTER to Quit ";
+    std::cin.ignore();
     return 0;
 }
