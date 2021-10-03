@@ -55,6 +55,8 @@ namespace banana
             while (m_isRunning)        // core Game Loop
             {
                 m_Window.pumpEvents();
+                m_Window.beginRender();
+                m_Window.endRender();
             }
         shutdown();
         }

@@ -10,11 +10,12 @@ namespace banana::core
 		Window();
 		~Window();
 
-		//Calls SDL_CreateWindow
 		bool create();
 		void shutdown();
 		void pumpEvents();
-
+		
+		void beginRender();
+		void endRender();
 	private:
 		SDL_Window* m_Window;
 		SDL_GLContext m_GLContext;
