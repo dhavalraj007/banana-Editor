@@ -1,4 +1,7 @@
-MAJOR = 0
-MINOR = 0
+import globals
+import sys
 
-print("banana tools v.{}.{}".format(MAJOR,MINOR))
+
+print("banana tools v.{}.{}".format(globals.V_MAJOR,globals.V_MINOR))
+
+sys.exit(0)

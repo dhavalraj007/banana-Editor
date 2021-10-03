@@ -1,21 +1,24 @@
-# cli build
-# cli gen
-# cli version
-# cli run
-# cli gen build version
-
-import sys
+import sys,os
 import subprocess
 
 TOOLS_DIR = "tools"
 
 def runCommand(cmd):
-    subprocess.call(["python", "{}/{}.py".format(TOOLS_DIR,cmd)])
+    ret = 0
+    scriptPath = "{}/{}.py".format(TOOLS_DIR,cmd)
+    if os.path.exists(scriptPath):
+        print("Executing : ",cmd)
+        ret = subprocess.call(["python3", scriptPath])
+    else:
+        print("Invalid Command : ",cmd)
+        ret = -1
+    
+    return ret
+
+
 
 for i in range(1,len(sys.argv)):
     cmd = sys.argv[i] 
-    
     print("\n----------------------")
-    print("Executing : ",cmd)
-
-    runCommand(cmd)
+    if runCommand(cmd) != 0:
+        break
