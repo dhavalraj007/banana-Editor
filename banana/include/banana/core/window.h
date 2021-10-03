@@ -1,6 +1,7 @@
 #pragma once
 
 struct SDL_Window;
+using SDL_GLContext = void*;
 namespace banana::core
 {
 	class Window
@@ -16,5 +17,6 @@ namespace banana::core
 
 	private:
 		SDL_Window* m_Window;
+		SDL_GLContext m_GLContext;
 	};
 }

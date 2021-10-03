@@ -1,6 +1,7 @@
 #pragma once
 
 #include"core/window.h"
+#include"managers/logmanager.h"
 
 namespace banana
 {   
@@ -18,8 +19,9 @@ namespace banana
         inline void quit() { m_isRunning = false; }
 
         core::Window m_Window;
-        
-        
+        //managers
+        managers::LogManager m_LogManager;
+
         Engine(Engine&) = delete;
         Engine operator=(Engine&) = delete;
     
@@ -32,5 +34,6 @@ namespace banana
         Engine();
 
         bool m_isRunning;
+        bool m_isInitialized;
     };
 }

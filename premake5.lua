@@ -13,8 +13,11 @@ odir = "bin-obj/%{cfg.buildcfg}/%{prj.name}"
 -- External Dependencies
 externals = {}
 externals["sdl2"] = "external/sdl2"
+externals["spdlog"] = "external/spdlog"
+externals["glad"] = "external/glad"
 
-
+-- process glad before anything else
+include "external/glad"
 
 project "banana"
     location "banana"
@@ -30,10 +33,13 @@ project "banana"
 
     targetdir(tdir)
     objdir(odir)
+    
     sysincludedirs
     {
         "%{prj.name}/include/banana",
-        "%{externals.sdl2}/include"
+        "%{externals.sdl2}/include",
+        "%{externals.spdlog}/include",
+        "%{externals.glad}/include"
     }
 
     files
@@ -43,6 +49,11 @@ project "banana"
         "%{prj.name}/src/**.cpp"
     }
     
+    defines
+    {
+        "GLFW_INCLUDE_NONE" -- ensure glad doesn't include glfw
+    }
+
     filter { "system:windows","configurations:*"}
         systemversion "latest"
 
@@ -130,7 +141,8 @@ project "bananaEditor"
 
         links
         {
-            "SDL2"
+            "SDL2",
+            "glad"
         }
     
     filter { "system:macosx","configurations:*"}
@@ -152,7 +164,8 @@ project "bananaEditor"
         }
         links
         {
-            "SDL2"
+            "SDL2",
+            "glad"
         }
     
     filter {"configurations:Debug"}

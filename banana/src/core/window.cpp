@@ -1,6 +1,8 @@
 #include"core/window.h"
 #include"engine.h"
+#include"log.h"
 #include"sdl2/SDL.h"
+#include"glad/glad.h"
 #include<iostream>
 
 namespace banana::core
@@ -20,7 +22,7 @@ namespace banana::core
 		m_Window = SDL_CreateWindow("Banana Yumm", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
 		if (!m_Window)
 		{
-			std::cout << "ERROR Creating Window: " << SDL_GetError() << std::endl;
+			BANANA_ERROR("ERROR Creating Window: {}",SDL_GetError());
 			return false;
 		}
 		return true;
