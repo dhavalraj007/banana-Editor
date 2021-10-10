@@ -1,6 +1,6 @@
-#include"core/window.h"
-#include"engine.h"
-#include"log.h"
+#include"banana/core/window.h"
+#include"banana/engine.h"
+#include"banana/log.h"
 #include"sdl2/SDL.h"
 #include"glad/glad.h"
 #include<iostream>
@@ -43,26 +43,13 @@ namespace banana::core
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress);
 
-		// TODO: move this to renderer init
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-		
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		glClearColor(
-			static_cast<float>(0x64)/static_cast<float>(0xFF),
-			static_cast<float>(0x95) / static_cast<float>(0xFF),
-			static_cast<float>(0xED) / static_cast<float>(0xFF),
-			1
-		);
-
 		return true;
 	}
 
 	void Window::shutdown()
 	{
 		SDL_DestroyWindow(m_Window);
+		SDL_GL_DeleteContext(m_GLContext);
 		m_Window = nullptr;
 	}
 
@@ -84,7 +71,7 @@ namespace banana::core
 
 	void Window::beginRender()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Engine::Instance().getRenderManager().clear();
 	}
 
 	void Window::endRender()
