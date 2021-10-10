@@ -1,7 +1,8 @@
 #pragma once
 
-#include"core/window.h"
-#include"managers/logmanager.h"
+#include"banana/core/window.h"
+#include"banana/managers/logmanager.h"
+#include"banana/managers/rendermanager.h"
 
 namespace banana
 {   
@@ -14,24 +15,29 @@ namespace banana
             return instance;
         }
         ~Engine(){}
-        //Contains Main loop
-        void run();
+        
+        void run();                             //Contains Main loop
         inline void quit() { m_isRunning = false; }
 
         core::Window m_Window;
-        //managers
-        managers::LogManager m_LogManager;
+
+        //Managers
+        inline managers::RenderManager& getRenderManager() { return m_RenderManager; }
 
         Engine(Engine&) = delete;
         Engine operator=(Engine&) = delete;
     
     private:
         void getInfo();
-        //Initialize/Create Subsystems(SDL,Window)
-        [[nodiscard]] bool initialize();
-        //Shutdown Subsystems(SDL,window)
-        void shutdown();
+       
+        [[nodiscard]] bool initialize();         //Initialize/Create Subsystems(SDL,Window)
+        
+        void shutdown();                        //Shutdown Subsystems(SDL,window)
         Engine();
+        
+        //managers
+        managers::LogManager m_LogManager;
+        managers::RenderManager m_RenderManager;
 
         bool m_isRunning;
         bool m_isInitialized;

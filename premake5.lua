@@ -36,7 +36,7 @@ project "banana"
     
     sysincludedirs
     {
-        "%{prj.name}/include/banana",
+        "%{prj.name}/include",
         "%{externals.sdl2}/include",
         "%{externals.spdlog}/include",
         "%{externals.glad}/include"
