@@ -6,7 +6,7 @@
 
 namespace banana
 {   
-    class Engine
+    class Engine                        // main Class that holds window,Managers
     {
     public:
         static Engine& Instance()
@@ -15,11 +15,9 @@ namespace banana
             return instance;
         }
         ~Engine(){}
-        
         void run();                             //Contains Main loop
         inline void quit() { m_isRunning = false; }
 
-        core::Window m_Window;
 
         //Managers
         inline managers::RenderManager& getRenderManager() { return m_RenderManager; }
@@ -27,19 +25,20 @@ namespace banana
         Engine(Engine&) = delete;
         Engine operator=(Engine&) = delete;
     
+        core::Window m_Window;
     private:
-        void getInfo();
        
-        [[nodiscard]] bool initialize();         //Initialize/Create Subsystems(SDL,Window)
+        Engine();                               //initializes isRunning and isInitialized as false
+        [[nodiscard]] bool initialize();         //Initialize/Create Subsystems(logManager,SDL,window,renderManager)
+        void getInfo();
         
-        void shutdown();                        //Shutdown Subsystems(SDL,window)
-        Engine();
+        void shutdown();                        //Shutdown Subsystems(renderManger,window,logManager)
         
         //managers
         managers::LogManager m_LogManager;
         managers::RenderManager m_RenderManager;
 
-        bool m_isRunning;
-        bool m_isInitialized;
+        bool m_isRunning;                       // helps in when to close the window
+        bool m_isInitialized;                   // to restrict calling Engine::initialize() more than once
     };
 }

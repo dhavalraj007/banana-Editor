@@ -5,7 +5,7 @@
 
 namespace banana::graphics
 {
-	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
+	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)		// creates shader program from shader source
 	{
 		m_ProgramId = glCreateProgram();
 

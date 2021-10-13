@@ -12,14 +12,16 @@ namespace banana::graphics
 		glGenVertexArrays(1, &m_Vao);
 		glBindVertexArray(m_Vao);
 
-		glGenBuffers(1, &m_PositionVbo);
-		glBindBuffer(GL_ARRAY_BUFFER, m_PositionVbo);
-		glBufferData(GL_ARRAY_BUFFER, vertexCount * dimensions * sizeof(float), vertexArray, GL_STATIC_DRAW);
+			glGenBuffers(1, &m_PositionVbo);
+			glBindBuffer(GL_ARRAY_BUFFER, m_PositionVbo);
+				
+				glBufferData(GL_ARRAY_BUFFER, vertexCount * dimensions * sizeof(float), vertexArray, GL_STATIC_DRAW);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, dimensions, GL_FLOAT, GL_FALSE, 0, 0);
-		glDisableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, dimensions, GL_FLOAT, GL_FALSE, 0, 0);
+				glDisableVertexAttribArray(0);
+		
+			glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 		glBindVertexArray(0);
 	}
@@ -31,9 +33,9 @@ namespace banana::graphics
 
 		glBindVertexArray(m_Vao);
 
-		glGenBuffers(1, &m_Ebo); 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_Ebo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementCount * sizeof(uint32_t), elementArray, GL_STATIC_DRAW);
+			glGenBuffers(1, &m_Ebo); 
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,m_Ebo);
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementCount * sizeof(uint32_t), elementArray, GL_STATIC_DRAW);
 
 		glBindVertexArray(0);
 	}
