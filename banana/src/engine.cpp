@@ -1,5 +1,7 @@
 #include"banana/engine.h"
 #include"banana/log.h"
+#include"banana/input/mouse.h"
+#include"banana/input/keyboard.h"
 #include"sdl2/SDL.h"
 #include"banana/graphics/mesh.h"
 #include"banana/graphics/shader.h"
@@ -36,6 +38,10 @@ namespace banana
                     ok = true;
                     m_isRunning = true;
                     m_isInitialized = true;
+
+                    //input
+                    input::Mouse::initialize();
+                    input::Keyboard::initialize();
                 }
             }
         }
@@ -79,9 +85,11 @@ namespace banana
                     #version 410 core
                     layout (location = 0) in vec3 position;
                     out vec3 vpos;
+                    uniform vec2 offset = vec2(0.5);
+                    
                     void main()
                     {
-                        vpos = position + vec3(0.5,0.5,0.0);
+                        vpos = position + vec3(offset,0.0);
                         gl_Position = vec4(position,1.0);
                     }
                       )";
@@ -90,7 +98,6 @@ namespace banana
                     #version 410 core
                     out vec4 outColor;
                     in vec3 vpos;
-                    uniform vec3 color = vec3(0.0);
 
                     void main()
                     {
@@ -99,23 +106,37 @@ namespace banana
                       )";
 
                 std::shared_ptr<graphics::Shader> shader = std::make_shared<graphics::Shader>(vertexShader, fragShader);
-                shader->setUniformFloat3("color", 1, 0, 0);
 
-                m_RenderManager.setWireframeMode(true);
+                
                 while (m_isRunning)        // core Game Loop
                 {
-
                     m_Window.pumpEvents();
+
                     m_Window.beginRender();
+                    
+                    int windowW, windowH;
+                    getWindow().getSize(windowW, windowH);
+
+                    float normX = (float) input::Mouse::X() / (float)windowW;
+                    float normY = (float)(windowH - input::Mouse::Y()) / (float)windowH;
+
+                    if (input::Keyboard::keyUp(BANANA_INPUT_KEY_R))
+                    {
+                        normX += 1.f;
+                        BANANA_TRACE("R");
+                    }
+
+                    shader->setUniformFloat2("offset", normX, normY);
 
                     auto rendercmd = std::make_unique<graphics::rendercommands::RenderMesh>(mesh, shader);
                     m_RenderManager.submit(std::move(rendercmd));
                     m_RenderManager.flush();
+                 
                     m_Window.endRender();
                 }
             }
         shutdown();
-        }
+        }  
     }
 
     void Engine::shutdown()

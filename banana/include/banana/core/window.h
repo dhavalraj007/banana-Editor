@@ -12,6 +12,8 @@ namespace banana::core
 
 		bool create();
 		void shutdown();
+		
+		void getSize(int& w, int& h);
 		void pumpEvents();
 		
 		void beginRender();

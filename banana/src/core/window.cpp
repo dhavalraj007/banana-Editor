@@ -1,6 +1,8 @@
 #include"banana/core/window.h"
 #include"banana/engine.h"
 #include"banana/log.h"
+#include"banana/input/mouse.h"
+#include"banana/input/keyboard.h"
 #include"sdl2/SDL.h"
 #include"glad/glad.h"
 #include<iostream>
@@ -53,6 +55,11 @@ namespace banana::core
 		m_Window = nullptr;
 	}
 
+	void Window::getSize(int& w, int& h)
+	{
+		SDL_GetWindowSize(m_Window, &w, &h);
+	}
+
 	void Window::pumpEvents()
 	{
 		SDL_Event e;
@@ -67,6 +74,10 @@ namespace banana::core
 				break;
 			}
 		}
+		//input update
+		input::Mouse::update();
+		input::Keyboard::update();
+		
 	}
 
 	void Window::beginRender()

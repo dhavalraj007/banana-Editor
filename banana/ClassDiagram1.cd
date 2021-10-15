@@ -10,7 +10,7 @@
   <Class Name="banana::core::Window">
     <Position X="3.75" Y="1.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>CAAIAAAAAAAAAAABAAAAAAAAAQQAAAAAAABACQAAAgA=</HashCode>
+      <HashCode>CAAIAAAAAIAAAAABAAAAAAAAAQQAAAAAAABACQAAAgA=</HashCode>
       <FileName>include\banana\core\window.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -54,6 +54,20 @@
     <TypeIdentifier>
       <HashCode>AGAAAAgAAAAAAAABAAEAAABABAAAAAAAAAgAABAAAAE=</HashCode>
       <FileName>include\banana\managers\renderManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="banana::input::Keyboard">
+    <Position X="13" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABICAAAAIEEAAAAAAAAAAAAAAAAAAAEQAA=</HashCode>
+      <FileName>include\banana\input\keyboard.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="banana::input::Mouse">
+    <Position X="14.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAQAAAwAAAIAEAAAEAAAACAAgAAEBgAAAGYAA=</HashCode>
+      <FileName>include\banana\input\mouse.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
