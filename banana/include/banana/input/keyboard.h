@@ -1,6 +1,5 @@
 #pragma once
 #include<array>
-#include<sdl2/SDL_keyboard.h>
 
 namespace banana::input
 {

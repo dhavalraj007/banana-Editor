@@ -45,8 +45,10 @@ project "banana"
     files
     {
         "%{prj.name}/include/**.h",     --only this will be exposed to outer projects
+        "%{prj.name}/include/**.cpp",   
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/**.natvis"
     }
     
     defines
@@ -123,7 +125,8 @@ project "bananaEditor"
 
     sysincludedirs
     {
-        "banana/include"
+        "banana/include",
+        "%{externals.spdlog}/include"
     }
 
     filter { "system:windows","configurations:*"}

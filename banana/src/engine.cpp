@@ -1,12 +1,11 @@
 #include"banana/engine.h"
 #include"banana/log.h"
+#include"banana/app.h"
 #include"banana/input/mouse.h"
 #include"banana/input/keyboard.h"
 #include"sdl2/SDL.h"
-#include"banana/graphics/mesh.h"
-#include"banana/graphics/shader.h"
 
-namespace banana
+namespace banana 
 {
     //public
 
@@ -16,7 +15,7 @@ namespace banana
         BANANA_ASSERT(!m_isInitialized, "Attempting to call Engine::initialized more than once!");
         if (!m_isInitialized)
         {
-            m_LogManager.initialize();
+            
             getInfo();
 
             if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
@@ -42,6 +41,9 @@ namespace banana
                     //input
                     input::Mouse::initialize();
                     input::Keyboard::initialize();
+
+                    //init client
+                    m_App->initialize();
                 }
             }
         }
@@ -59,80 +61,23 @@ namespace banana
 
    
 
-    void Engine::run()
+    void Engine::run(App* app)
     {
-        if (initialize())
+        m_LogManager.initialize();
+        BANANA_ASSERT(!m_App, "Attempting to call Engine::run when a valid app exists");
+        if (m_App)
         {
-          
+            return;
+        }
+        m_App = app;
+        if (initialize())       //init engine
+        {
             {
-                //Test Mesh
-                float vertices[] = {
-                     0.5f,  0.5f, 0.f,      //top right
-                     0.5f, -0.5f, 0.f,      //bottom right
-                    -0.5f, -0.5f, 0.f,       //bottom left
-                    -0.5f,  0.5f, 0.f      //top left
-                };
-                uint32_t elements[] = {
-                    0, 1, 3,
-                    3, 1, 2
-                };
-
-                std::shared_ptr<graphics::Mesh> mesh = std::make_shared<graphics::Mesh>(vertices, 4, 3, elements, 6);
-
-                //Test Shader
-
-                const char* vertexShader = R"(
-                    #version 410 core
-                    layout (location = 0) in vec3 position;
-                    out vec3 vpos;
-                    uniform vec2 offset = vec2(0.5);
-                    
-                    void main()
-                    {
-                        vpos = position + vec3(offset,0.0);
-                        gl_Position = vec4(position,1.0);
-                    }
-                      )";
-
-                const char* fragShader = R"(
-                    #version 410 core
-                    out vec4 outColor;
-                    in vec3 vpos;
-
-                    void main()
-                    {
-                        outColor = vec4(vpos,1.0);
-                    }
-                      )";
-
-                std::shared_ptr<graphics::Shader> shader = std::make_shared<graphics::Shader>(vertexShader, fragShader);
-
-                
                 while (m_isRunning)        // core Game Loop
                 {
                     m_Window.pumpEvents();
-
-                    m_Window.beginRender();
-                    
-                    int windowW, windowH;
-                    getWindow().getSize(windowW, windowH);
-
-                    float normX = (float) input::Mouse::X() / (float)windowW;
-                    float normY = (float)(windowH - input::Mouse::Y()) / (float)windowH;
-
-                    if (input::Keyboard::keyUp(BANANA_INPUT_KEY_R))
-                    {
-                        normX += 1.f;
-                        BANANA_TRACE("R");
-                    }
-
-                    shader->setUniformFloat2("offset", normX, normY);
-
-                    auto rendercmd = std::make_unique<graphics::rendercommands::RenderMesh>(mesh, shader);
-                    m_RenderManager.submit(std::move(rendercmd));
-                    m_RenderManager.flush();
-                 
-                    m_Window.endRender();
+                    update();
+                    render();
                 }
             }
         shutdown();
@@ -144,6 +89,8 @@ namespace banana
         m_isRunning = false;
         m_isInitialized = false;
 
+        //client
+        m_App->shutdown();
         //Managers
         m_RenderManager.shutdown();
         
@@ -155,9 +102,27 @@ namespace banana
     }
 
     //private
+
+    void Engine::update()
+    {
+        m_Window.pumpEvents();
+        m_App->update();
+    }
+
+
+    void Engine::render()
+    {
+        m_Window.beginRender();
+
+        m_App->render();
+
+        m_Window.endRender();
+    }
+
     Engine::Engine() 
         :m_isRunning(false)
         ,m_isInitialized(false)
+        ,m_App(nullptr)
     {}
 
     void Engine::getInfo()
