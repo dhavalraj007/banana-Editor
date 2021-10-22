@@ -19,8 +19,8 @@ namespace banana
         void run(App* app);                             //Contains Main loop
         inline void quit() { m_isRunning = false; }
 
+        inline App& getApp() { return *m_App; }
         inline core::Window& getWindow() { return m_Window; }
-        //Managers
         inline managers::RenderManager& getRenderManager() { return m_RenderManager; }
 
         Engine(Engine&) = delete;

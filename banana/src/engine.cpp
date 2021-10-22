@@ -28,8 +28,8 @@ namespace banana
                 SDL_VERSION(&version);
                 BANANA_INFO("SDL {}.{}.{}", (int32_t)version.major, (int32_t)version.minor, (int32_t)version.patch);
 
-
-                if (m_Window.create())
+                core::WindowProperties props = m_App->GetWindowProperties();
+                if (m_Window.create(props))
                 {
                     //initialize managers
                     m_RenderManager.initialize();

@@ -7,17 +7,33 @@
 #include"banana/graphics/shader.h"
 #include"banana/input/mouse.h"
 #include"banana/input/keyboard.h"
+#include"external/imgui/imgui.h"
 
 using namespace banana;
 
 class Editor :public banana::App
 {
 public:
+
+    float xKeyOffset = 0.f;
+    float yKeyOffset = 0.f;
+    float keySpeed = 0.001f;
     std::shared_ptr<graphics::Mesh> m_mesh;
     std::shared_ptr<graphics::Shader> m_shader;
-    void initialize()
+
+    core::WindowProperties GetWindowProperties()
     {
-        BANANA_TRACE("Editor::Intitalize");
+        core::WindowProperties props;
+        props.title = "BANANA Editor";
+        props.w = 800;
+        props.h = 600;
+        props.imguiProps.isDockingEnable = true;
+
+        return props;
+    }
+
+    void initialize() override
+    {
         //Test Mesh
         float vertices[] = {
              0.5f,  0.5f, 0.f,      //top right
@@ -62,37 +78,53 @@ public:
 
     }
 
-    void shutdown()
+    void shutdown() override
     {
-        BANANA_TRACE("Editor::shutdown");
+
     }
 
-    void update()
+    void update()   override
     {
-        BANANA_TRACE("Editor::update");
-        int windowW, windowH;
+        int windowW = 0;
+        int windowH = 0;
         Engine::Instance().getWindow().getSize(windowW, windowH);
 
-        float normX = (float)input::Mouse::X() / (float)windowW;
-        float normY = (float)(windowH - input::Mouse::Y()) / (float)windowH;
+        float xNorm = (float)input::Mouse::X() / (float)windowW;
+        float yNorm = (float)(windowH - input::Mouse::Y()) / (float)windowH;
 
-        if (input::Keyboard::keyUp(BANANA_INPUT_KEY_R))
-        {
-            normX += 1.f;
-            BANANA_TRACE("R");
-        }
+        if (input::Keyboard::key(BANANA_INPUT_KEY_LEFT)) { xKeyOffset -= keySpeed; }
+        if (input::Keyboard::key(BANANA_INPUT_KEY_RIGHT)) { xKeyOffset += keySpeed; }
+        if (input::Keyboard::key(BANANA_INPUT_KEY_UP)) { yKeyOffset += keySpeed; }
+        if (input::Keyboard::key(BANANA_INPUT_KEY_DOWN)) { yKeyOffset -= keySpeed; }
 
-        m_shader->setUniformFloat2("offset", normX, normY);
+        if (input::Keyboard::keyDown(BANANA_INPUT_KEY_LEFT)) { xKeyOffset -= keySpeed * 100; }
+        if (input::Keyboard::keyDown(BANANA_INPUT_KEY_RIGHT)) { xKeyOffset += keySpeed * 100; }
 
+        m_shader->setUniformFloat2("offset", xNorm + xKeyOffset, yNorm + yKeyOffset);
     }
 
-    void render()
+    void render()   override
     {
-        BANANA_TRACE("Editor::render");
         auto rendercmd = std::make_unique<graphics::rendercommands::RenderMesh>(m_mesh, m_shader);
         Engine::Instance().getRenderManager().submit(std::move(rendercmd));
         Engine::Instance().getRenderManager().flush();
+    }
 
+    void imguiRender()  override
+    {
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
+
+        if (ImGui::Begin("RectPos x"))
+        {
+            ImGui::DragFloat("Rect Pos X", &xKeyOffset, 0.01f);
+        }
+        ImGui::End();
+
+        if (ImGui::Begin("RectPos y"))
+        {
+            ImGui::DragFloat("Rect Pos Y", &yKeyOffset, 0.01f);
+        }
+        ImGui::End();
     }
 };
 
