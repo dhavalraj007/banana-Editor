@@ -1,9 +1,13 @@
 #pragma once
 #include"imguiwindow.h"
 #include<string>
+#include<memory>
 
 struct SDL_Window;
 using SDL_GLContext = void*;
+namespace banana::graphics {
+	class Framebuffer;
+}
 namespace banana::core
 {
 	struct WindowProperties
@@ -28,8 +32,10 @@ namespace banana::core
 		void shutdown();
 		
 		void getSize(int& w, int& h);
-		SDL_Window* getSDLWindow() { return m_Window; }
-		SDL_GLContext getGLContext() { return m_GLContext; }
+		inline SDL_Window* getSDLWindow() { return m_Window; }
+		inline SDL_GLContext getGLContext() { return m_GLContext; }
+		inline graphics::Framebuffer* getFramebuffer() { return m_Framebuffer.get(); }
+
 		void pumpEvents();
 		
 		void beginRender();
@@ -38,5 +44,6 @@ namespace banana::core
 		SDL_Window* m_Window;
 		SDL_GLContext m_GLContext;
 		ImguiWindow m_ImguiWindow;
+		std::shared_ptr<graphics::Framebuffer> m_Framebuffer;
 	};
 }

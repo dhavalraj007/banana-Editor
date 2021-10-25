@@ -2,6 +2,7 @@
 #include"banana/engine.h"
 #include"banana/log.h"
 #include"banana/app.h"
+#include"banana/graphics/framebuffer.h"
 #include"banana/input/mouse.h"
 #include"banana/input/keyboard.h"
 #include"sdl2/SDL.h"
@@ -53,6 +54,7 @@ namespace banana::core
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION,4);
 		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
 
 		SDL_SetWindowMinimumSize(m_Window, props.wMin, props.hMin);
 		
@@ -65,8 +67,9 @@ namespace banana::core
 		}
 
 		gladLoadGLLoader(SDL_GL_GetProcAddress);
-		Engine::Instance().getRenderManager().setClearColor(props.ccR, props.ccG, props.ccB, 1.f);
 
+		m_Framebuffer = std::make_shared<graphics::Framebuffer>(props.w, props.h);
+		m_Framebuffer->SetClearColor(props.ccR, props.ccG, props.ccB, 1.f);
 		m_ImguiWindow.create(props.imguiProps);
 
 		return true;
@@ -112,11 +115,17 @@ namespace banana::core
 
 	void Window::beginRender()
 	{
-		Engine::Instance().getRenderManager().clear();
+		auto& rm = Engine::Instance().getRenderManager();
+		rm.clear();
+		rm.submit(BANANA_SUBMIT_RC(PushFramebuffer,m_Framebuffer));
 	}
 
 	void Window::endRender()
 	{
+		auto& rm = Engine::Instance().getRenderManager();
+		rm.submit(BANANA_SUBMIT_RC(PopFramebuffer));
+		rm.flush();
+
 
 		m_ImguiWindow.beginRender();
 

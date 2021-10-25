@@ -3,8 +3,11 @@
 #include"banana/app.h"
 #include"banana/main.h"
 #include"banana/log.h"
+
 #include"banana/graphics/mesh.h"
 #include"banana/graphics/shader.h"
+#include"banana/graphics/framebuffer.h"
+
 #include"banana/input/mouse.h"
 #include"banana/input/keyboard.h"
 #include"external/imgui/imgui.h"
@@ -123,6 +126,20 @@ public:
         if (ImGui::Begin("RectPos y"))
         {
             ImGui::DragFloat("Rect Pos Y", &yKeyOffset, 0.01f);
+        }
+        ImGui::End();
+
+        if (ImGui::Begin("Game View"))
+        {
+            if (ImGui::IsWindowHovered())
+            {
+                ImGui::CaptureMouseFromApp(false);
+            }
+            ImVec2 size{ 500,300 };
+            ImVec2 uv0{ 0,1 };
+            ImVec2 uv1{ 1,0 };
+            auto& window = Engine::Instance().getWindow();
+            ImGui::Image((ImTextureID)(intptr_t)window.getFramebuffer()->getTextureId(), size,uv0,uv1);
         }
         ImGui::End();
     }

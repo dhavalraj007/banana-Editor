@@ -1,8 +1,10 @@
 #include"banana/graphics/renderCommands.h"
 #include"banana/log.h"
+#include"banana/engine.h"
 
 #include"banana/graphics/mesh.h"
 #include"banana/graphics/shader.h"
+#include"banana/graphics/framebuffer.h"
 
 #include"glad/glad.h"
 
@@ -34,6 +36,24 @@ namespace banana::graphics::rendercommands
 		{
 			BANANA_WARN("Attempting execute RenderMesh with invalid data");
 		}
+	}
+
+	void PushFramebuffer::execute()
+	{
+		std::shared_ptr<Framebuffer> framebuffer = m_Framebuffer.lock();
+		if (framebuffer)
+		{
+			Engine::Instance().getRenderManager().pushFrameBuffer(framebuffer);
+		}
+		else
+		{
+			BANANA_WARN("Attempting execute PushFramebuffer with invalid data");
+		}
+	}
+
+	void PopFramebuffer::execute()
+	{
+		Engine::Instance().getRenderManager().popFramebuffer();
 
 	}
 }

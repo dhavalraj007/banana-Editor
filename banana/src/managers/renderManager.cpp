@@ -1,6 +1,8 @@
-#include "banana/managers\renderManager.h"
+#include "banana/managers/renderManager.h"
 #include"banana/log.h"
+#include"banana/engine.h"
 #include"glad/glad.h"
+#include"banana/graphics/framebuffer.h"
 
 
 namespace banana::managers
@@ -49,6 +51,11 @@ namespace banana::managers
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	void RenderManager::setViewport(int x, int y, int w, int h)
+	{
+		glViewport(x, y, w, h);
+	}
+
 	void RenderManager::setClearColor(float r, float g, float b, float a)
 	{
 		glClearColor(r, g, b, a);
@@ -80,6 +87,45 @@ namespace banana::managers
 			m_RenderCommands.pop();
 
 			rendercommand->execute();
+		}
+	}
+
+	void RenderManager::pushFrameBuffer(std::shared_ptr<graphics::Framebuffer> framebuffer)
+	{
+		m_FrameBuffers.push(framebuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->getFbo());
+		uint32_t w, h;
+		framebuffer->getSize(w, h);
+		setViewport(0, 0, w, h);
+
+		float r, g, b, a;
+		framebuffer->GetClearColor(r, g, b, a);
+		glClearColor(r, g, b, a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void RenderManager::popFramebuffer()
+	{
+		BANANA_ASSERT(m_FrameBuffers.size() > 0, "RenderManger::popFramebuffer: Empty stack");
+		if (m_FrameBuffers.size() > 0)
+		{
+			m_FrameBuffers.pop();
+			if (m_FrameBuffers.size() > 0)
+			{
+				auto nextfb = m_FrameBuffers.top();
+				glBindFramebuffer(GL_FRAMEBUFFER, nextfb->getFbo());
+				uint32_t w, h;
+				nextfb->getSize(w, h);
+				setViewport(0, 0, w, h);
+			}
+			else
+			{
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				auto& window = Engine::Instance().getWindow();
+				int w, h;
+				window.getSize(w, h);
+				setViewport(0, 0, w, h);
+			}
 		}
 	}
 }
