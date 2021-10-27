@@ -1,5 +1,6 @@
 #pragma once
 #include"banana/graphics/renderCommands.h"
+#include"external/glm/glm.hpp"
 #include<queue>
 #include<stack>
 
@@ -22,7 +23,7 @@ namespace banana::managers
 
 		void clear();
 		void setViewport(int x, int y, int w, int h);
-		void setClearColor(float r, float g, float b, float a);
+		void setClearColor(const glm::vec4& clearColor);
 		void setWireframeMode(bool value);
 		void submit(std::unique_ptr<graphics::rendercommands::RenderCommand> rendercommand);
 		

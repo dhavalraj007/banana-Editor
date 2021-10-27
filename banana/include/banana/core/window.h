@@ -2,6 +2,7 @@
 #include"imguiwindow.h"
 #include<string>
 #include<memory>
+#include"external/glm/glm.hpp"
 
 struct SDL_Window;
 using SDL_GLContext = void*;
@@ -16,7 +17,7 @@ namespace banana::core
 		int x, y, w, h;
 		int wMin, hMin;
 		int flags;
-		float ccR, ccG, ccB;
+		glm::vec4 clearColor;
 		ImguiWindowProperties imguiProps;
 
 		WindowProperties();
@@ -31,11 +32,12 @@ namespace banana::core
 		bool create(const WindowProperties& props);
 		void shutdown();
 		
-		void getSize(int& w, int& h);
+		glm::ivec2 getSize();
+
 		inline SDL_Window* getSDLWindow() { return m_Window; }
 		inline SDL_GLContext getGLContext() { return m_GLContext; }
 		inline graphics::Framebuffer* getFramebuffer() { return m_Framebuffer.get(); }
-
+		inline ImguiWindow& getImguiWindow() { return m_ImguiWindow; }
 		void pumpEvents();
 		
 		void beginRender();

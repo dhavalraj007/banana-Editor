@@ -24,9 +24,9 @@ namespace banana::core
 		hMin = 180;
 		
 		flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
-		ccR = static_cast<float>(0x64) / static_cast<float>(0xFF);
-		ccG = static_cast<float>(0x95) / static_cast<float>(0xFF);
-		ccB = static_cast<float>(0xED) / static_cast<float>(0xFF);
+		clearColor = glm::vec4( static_cast<float>(0x64) / static_cast<float>(0xFF),
+								static_cast<float>(0x95) / static_cast<float>(0xFF),
+								static_cast<float>(0xED) / static_cast<float>(0xFF),1);
 	}
 
 	Window::Window():m_Window(nullptr){}
@@ -69,7 +69,7 @@ namespace banana::core
 		gladLoadGLLoader(SDL_GL_GetProcAddress);
 
 		m_Framebuffer = std::make_shared<graphics::Framebuffer>(props.w, props.h);
-		m_Framebuffer->SetClearColor(props.ccR, props.ccG, props.ccB, 1.f);
+		m_Framebuffer->SetClearColor(props.clearColor);
 		m_ImguiWindow.create(props.imguiProps);
 
 		return true;
@@ -82,9 +82,11 @@ namespace banana::core
 		m_Window = nullptr;
 	}
 
-	void Window::getSize(int& w, int& h)
+	glm::ivec2 Window::getSize()
 	{
+		int w, h;
 		SDL_GetWindowSize(m_Window, &w, &h);
+		return glm::ivec2(w, h);
 	}
 
 	void Window::pumpEvents()
@@ -106,7 +108,7 @@ namespace banana::core
 		{
 			input::Mouse::update();
 		}
-		if (m_ImguiWindow.wantCaptureMouse())
+		if (!m_ImguiWindow.wantCaptureKeyboard())
 		{
 			input::Keyboard::update();
 		}

@@ -25,10 +25,10 @@ namespace banana::managers
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		setClearColor(
-			static_cast<float>(0x64) / static_cast<float>(0xFF),
+			{ static_cast<float>(0x64) / static_cast<float>(0xFF),
 			static_cast<float>(0x95) / static_cast<float>(0xFF),
 			static_cast<float>(0xED) / static_cast<float>(0xFF),
-			1
+			1 }
 		);	// cornflower blue default clear color
 	}
 
@@ -56,9 +56,9 @@ namespace banana::managers
 		glViewport(x, y, w, h);
 	}
 
-	void RenderManager::setClearColor(float r, float g, float b, float a)
+	void RenderManager::setClearColor(const glm::vec4& clearColor)
 	{
-		glClearColor(r, g, b, a);
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	}
 
 	void RenderManager::setWireframeMode(bool value)
@@ -71,7 +71,7 @@ namespace banana::managers
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
-			
+
 	}
 
 	void RenderManager::submit(std::unique_ptr<graphics::rendercommands::RenderCommand> rendercommand)
@@ -94,13 +94,10 @@ namespace banana::managers
 	{
 		m_FrameBuffers.push(framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->getFbo());
-		uint32_t w, h;
-		framebuffer->getSize(w, h);
-		setViewport(0, 0, w, h);
+		setViewport(0, 0, framebuffer->getSize().x, framebuffer->getSize().y);
 
-		float r, g, b, a;
-		framebuffer->GetClearColor(r, g, b, a);
-		glClearColor(r, g, b, a);
+		
+		glClearColor(framebuffer->GetClearColor().r, framebuffer->GetClearColor().g, framebuffer->GetClearColor().b, framebuffer->GetClearColor().a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
@@ -114,17 +111,13 @@ namespace banana::managers
 			{
 				auto nextfb = m_FrameBuffers.top();
 				glBindFramebuffer(GL_FRAMEBUFFER, nextfb->getFbo());
-				uint32_t w, h;
-				nextfb->getSize(w, h);
-				setViewport(0, 0, w, h);
+				setViewport(0, 0, nextfb->getSize().x, nextfb->getSize().y);
 			}
 			else
 			{
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 				auto& window = Engine::Instance().getWindow();
-				int w, h;
-				window.getSize(w, h);
-				setViewport(0, 0, w, h);
+				setViewport(0, 0, window.getSize().x, window.getSize().y);
 			}
 		}
 	}

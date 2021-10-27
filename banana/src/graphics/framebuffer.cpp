@@ -8,12 +8,8 @@ namespace banana::graphics
 		:m_Fbo(0),
 		m_TextureId(0),
 		m_RenderBufferId(0),
-		m_Width(width),
-		m_Height(height),
-		m_CCR(1),
-		m_CCG(1),
-		m_CCB(1),
-		m_CCA(1)
+		m_size({width,height}),
+		m_clearColor(glm::vec4(1.f))
 	{
 		glGenFramebuffers(1, &m_Fbo);	BANANA_CHECK_GL_ERROR
 		glBindFramebuffer(GL_FRAMEBUFFER, m_Fbo);	BANANA_CHECK_GL_ERROR
@@ -21,7 +17,7 @@ namespace banana::graphics
 		//create color tex attachement
 		glGenTextures(1, &m_TextureId);	BANANA_CHECK_GL_ERROR;
 		glBindTexture(GL_TEXTURE_2D, m_TextureId);	BANANA_CHECK_GL_ERROR
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE,nullptr);	BANANA_CHECK_GL_ERROR//allocate mem
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE,nullptr);	BANANA_CHECK_GL_ERROR//allocate mem
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); BANANA_CHECK_GL_ERROR
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR); BANANA_CHECK_GL_ERROR
 		glBindTexture(GL_TEXTURE_2D, 0); BANANA_CHECK_GL_ERROR
@@ -31,7 +27,7 @@ namespace banana::graphics
 		// create depth,stencil attachement
 		glGenRenderbuffers(1, &m_RenderBufferId); BANANA_CHECK_GL_ERROR
 		glBindRenderbuffer(GL_RENDERBUFFER, m_RenderBufferId); BANANA_CHECK_GL_ERROR
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_Width, m_Height); BANANA_CHECK_GL_ERROR
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_size.x, m_size.y); BANANA_CHECK_GL_ERROR
 		glBindRenderbuffer(GL_RENDERBUFFER, 0); BANANA_CHECK_GL_ERROR
 
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_RenderBufferId); BANANA_CHECK_GL_ERROR

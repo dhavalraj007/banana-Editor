@@ -43,7 +43,6 @@ namespace banana::core
 
 	bool ImguiWindow::wantCaptureMouse()
 	{
-
 		return ImGui::GetIO().WantCaptureMouse;
 	}
 

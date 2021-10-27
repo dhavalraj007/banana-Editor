@@ -12,6 +12,12 @@
 #include"banana/input/keyboard.h"
 #include"external/imgui/imgui.h"
 
+#include"external/glm/glm.hpp"
+#include"external/glm/gtc/matrix_transform.hpp"
+#include"external/glm/gtc/type_ptr.hpp"
+#include"external/glm/gtx/string_cast.hpp"
+#define GLM_ENABLE_EXPERIMENTAL
+
 using namespace banana;
 
 class Editor :public banana::App
@@ -23,6 +29,7 @@ public:
     float keySpeed = 0.001f;
     std::shared_ptr<graphics::Mesh> m_mesh;
     std::shared_ptr<graphics::Shader> m_shader;
+    glm::vec2 m_RectPos, m_RectSize;
 
     core::WindowProperties GetWindowProperties()
     {
@@ -58,11 +65,12 @@ public:
                     layout (location = 0) in vec3 position;
                     out vec3 vpos;
                     uniform vec2 offset = vec2(0.5);
+                    uniform mat4 model = mat4(1.0);
                     
                     void main()
                     {
                         vpos = position + vec3(offset,0.0);
-                        gl_Position = vec4(position,1.0);
+                        gl_Position = model * vec4(position,1.0);
                     }
                       )";
 
@@ -78,7 +86,8 @@ public:
                       )";
 
         m_shader = std::make_shared<graphics::Shader>(vertexShader, fragShader);
-
+        m_RectPos=glm::vec2(0.f);
+        m_RectSize = glm::vec2(1.f);
     }
 
     void shutdown() override
@@ -88,14 +97,12 @@ public:
 
     void update()   override
     {
-        int windowW = 0;
-        int windowH = 0;
-        Engine::Instance().getWindow().getSize(windowW, windowH);
+        auto windowSize = Engine::Instance().getWindow().getSize();
 
-        float xNorm = (float)input::Mouse::X() / (float)windowW;
-        float yNorm = (float)(windowH - input::Mouse::Y()) / (float)windowH;
+        float xNorm = (float)input::Mouse::X() / (float)windowSize.x;
+        float yNorm = (float)(windowSize.y - input::Mouse::Y()) / (float)windowSize.y;
 
-        if (input::Keyboard::key(BANANA_INPUT_KEY_LEFT)) { xKeyOffset -= keySpeed; }
+        if (input::Keyboard::key(BANANA_INPUT_KEY_LEFT)) { xKeyOffset -= keySpeed;}
         if (input::Keyboard::key(BANANA_INPUT_KEY_RIGHT)) { xKeyOffset += keySpeed; }
         if (input::Keyboard::key(BANANA_INPUT_KEY_UP)) { yKeyOffset += keySpeed; }
         if (input::Keyboard::key(BANANA_INPUT_KEY_DOWN)) { yKeyOffset -= keySpeed; }
@@ -104,6 +111,10 @@ public:
         if (input::Keyboard::keyDown(BANANA_INPUT_KEY_RIGHT)) { xKeyOffset += keySpeed * 100; }
 
         m_shader->setUniformFloat2("offset", xNorm + xKeyOffset, yNorm + yKeyOffset);
+        glm::mat4 model = glm::mat4(1.f);
+        model = glm::translate(model, { m_RectPos.x,m_RectPos.y,0.f });
+        model = glm::scale(model, { m_RectSize.x,m_RectSize.y,0.f });
+        m_shader->setUniformMat4("model",model);
     }
 
     void render()   override
@@ -117,23 +128,24 @@ public:
     {
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-        if (ImGui::Begin("RectPos x"))
+        if (ImGui::Begin("Rect Pos"))
         {
-            ImGui::DragFloat("Rect Pos X", &xKeyOffset, 0.01f);
+            ImGui::DragFloat2("Rect Pos X", glm::value_ptr(m_RectPos), 0.01f);
         }
         ImGui::End();
 
-        if (ImGui::Begin("RectPos y"))
+        if (ImGui::Begin("Rect Size"))
         {
-            ImGui::DragFloat("Rect Pos Y", &yKeyOffset, 0.01f);
+            ImGui::DragFloat2("Rect Pos Y", glm::value_ptr(m_RectSize), 0.01f);
         }
         ImGui::End();
 
         if (ImGui::Begin("Game View"))
         {
             if (ImGui::IsWindowHovered())
-            {
+            {   
                 ImGui::CaptureMouseFromApp(false);
+                ImGui::CaptureKeyboardFromApp(false);
             }
             ImVec2 size{ 500,300 };
             ImVec2 uv0{ 0,1 };
