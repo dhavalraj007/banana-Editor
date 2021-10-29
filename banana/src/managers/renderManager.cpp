@@ -43,7 +43,7 @@ namespace banana::managers
 	// clear frame and assert none of the rendercommands left in queue
 	void RenderManager::clear()
 	{
-		BANANA_ASSERT(m_RenderCommands.size()==0," Unflushed RenderCommands in queue!")
+		BANANA_ASSERT(m_RenderCommands.size() == 0, " Unflushed RenderCommands in queue!");
 		while (m_RenderCommands.size() > 0)
 		{
 			m_RenderCommands.pop();

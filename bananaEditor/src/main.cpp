@@ -31,7 +31,7 @@ public:
     std::shared_ptr<graphics::Shader> m_shader;
     glm::vec2 m_RectPos, m_RectSize;
 
-    core::WindowProperties GetWindowProperties()
+    core::WindowProperties getWindowProperties()
     {
         core::WindowProperties props;
         props.title = "BANANA Editor";

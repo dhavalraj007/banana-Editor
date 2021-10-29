@@ -9,5 +9,5 @@ namespace banana::graphics
 #ifndef BANANA_CONFIG_RELEASE
 #define BANANA_CHECK_GL_ERROR banana::graphics::checkGLError();
 #else
-#define BANANA_CHECK_GL_ERROR (void)0
+#define BANANA_CHECK_GL_ERROR (void)0;
 #endif

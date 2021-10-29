@@ -9,7 +9,7 @@ namespace banana
 		App() {}
 		~App() {}
 
-		virtual core::WindowProperties GetWindowProperties() { return core::WindowProperties(); }
+		virtual core::WindowProperties getWindowProperties() { return core::WindowProperties(); }
 		virtual void initialize() {}
 		virtual void shutdown() {}
 		virtual void update() {}

@@ -19,6 +19,7 @@
 #define BANANA_ASSERT(x,msg) if((x)) {} else {BANANA_FATAL("ASSERT - {}\n\t{}\n\tfile: {}\n\ton line: {}",#x,msg,__FILE__,__LINE__); BANANA_BREAK(); }
 #else
 //disable logging in release builds
+#define BANANA_ASSERT(x,msg) (void)0
 #define BANANA_TRACE(...) (void)0
 #define BANANA_DEBUG(...) (void)0
 #define BANANA_INFO(...)  (void)0

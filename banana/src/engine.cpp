@@ -20,7 +20,7 @@ namespace banana
 
             if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
             {
-                BANANA_ERROR("ERROR Initialzing SDL2: {} ", SDL_GetError())
+                BANANA_ERROR("ERROR Initialzing SDL2: {} ", SDL_GetError());
             }
             else
             {
@@ -28,7 +28,7 @@ namespace banana
                 SDL_VERSION(&version);
                 BANANA_INFO("SDL {}.{}.{}", (int32_t)version.major, (int32_t)version.minor, (int32_t)version.patch);
 
-                core::WindowProperties props = m_App->GetWindowProperties();
+                core::WindowProperties props = m_App->getWindowProperties();
                 if (m_Window.create(props))
                 {
                     //initialize managers
