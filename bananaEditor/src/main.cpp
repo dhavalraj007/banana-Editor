@@ -59,33 +59,8 @@ public:
         m_mesh = std::make_shared<graphics::Mesh>(vertices, 4, 3, elements, 6);
 
         //Test Shader
+        m_shader = std::make_shared<graphics::Shader>("./shaders/vertexShader.glsl", "./shaders/fragmentShader.glsl");
 
-        const char* vertexShader = R"(
-                    #version 410 core
-                    layout (location = 0) in vec3 position;
-                    out vec3 vpos;
-                    uniform vec2 offset = vec2(0.5);
-                    uniform mat4 model = mat4(1.0);
-                    
-                    void main()
-                    {
-                        vpos = position + vec3(offset,0.0);
-                        gl_Position = model * vec4(position,1.0);
-                    }
-                      )";
-
-        const char* fragShader = R"(
-                    #version 410 core
-                    out vec4 outColor;
-                    in vec3 vpos;
-
-                    void main()
-                    {
-                        outColor = vec4(vpos,1.0);
-                    }
-                      )";
-
-        m_shader = std::make_shared<graphics::Shader>(vertexShader, fragShader);
         m_RectPos=glm::vec2(0.f);
         m_RectSize = glm::vec2(1.f);
     }

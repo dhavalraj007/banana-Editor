@@ -3,11 +3,22 @@
 #include"banana/graphics/helper.h"
 #include"glad/glad.h"
 #include"external/glm/gtc/type_ptr.hpp"
+#include<fstream>
+#include<sstream>
 
 namespace banana::graphics
 {
-	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)		// creates shader program from shader source
+	Shader::Shader(const std::string& vertexSourcePath, const std::string& fragmentSourcePath)		// creates shader program from shader source
 	{
+		std::ifstream vertexFile(vertexSourcePath);
+		std::ifstream fragFile(fragmentSourcePath);
+
+		std::stringstream vS, fS;
+		vS << vertexFile.rdbuf();
+		fS << fragFile.rdbuf();
+		std::string vertexSource = vS.str();
+		std::string fragmentSource = fS.str();
+
 		m_ProgramId = glCreateProgram();	BANANA_CHECK_GL_ERROR
 
 		int status = GL_FALSE;
