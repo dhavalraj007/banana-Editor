@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include "banana/engine.h"
 #include"banana/app.h"
 #include"banana/main.h"
@@ -6,6 +7,7 @@
 
 #include"banana/graphics/mesh.h"
 #include"banana/graphics/shader.h"
+#include"banana/graphics/texture.h"
 #include"banana/graphics/framebuffer.h"
 
 #include"banana/input/mouse.h"
@@ -27,9 +29,14 @@ public:
     float xKeyOffset = 0.f;
     float yKeyOffset = 0.f;
     float keySpeed = 0.001f;
+    float mixVal = 0.2f;
+    glm::vec2 m_RectPos, m_RectSize;
+
     std::shared_ptr<graphics::Mesh> m_mesh;
     std::shared_ptr<graphics::Shader> m_shader;
-    glm::vec2 m_RectPos, m_RectSize;
+    std::shared_ptr<graphics::Texture> m_BananaTex;
+    std::shared_ptr<graphics::Texture> m_ContTex;
+    
 
     core::WindowProperties getWindowProperties()
     {
@@ -55,20 +62,31 @@ public:
             0, 1, 3,
             3, 1, 2
         };
+        float texcoords[] = {
+            1.f,1.f,
+            1.f,0.f,
+            0.f,0.f,
+            0.f,1.f
+        };
 
-        m_mesh = std::make_shared<graphics::Mesh>(vertices, 4, 3, elements, 6);
 
+        m_BananaTex = std::make_shared<graphics::Texture>("bananaTex", "./res/banana.png", 0);
+        m_ContTex = std::make_shared<graphics::Texture>("pirateTex", "./res/pirate.png", 1);
+        m_mesh = std::make_shared<graphics::Mesh>(vertices, 4, 3,texcoords, elements, 6);
         //Test Shader
 
         const char* vertexShader = R"(
                     #version 410 core
                     layout (location = 0) in vec3 position;
+                    layout (location = 1) in vec2 tex;
                     out vec3 vpos;
+                    out vec2 uvs;
                     uniform vec2 offset = vec2(0.5);
                     uniform mat4 model = mat4(1.0);
                     
                     void main()
                     {
+                        uvs = tex;
                         vpos = position + vec3(offset,0.0);
                         gl_Position = model * vec4(position,1.0);
                     }
@@ -78,15 +96,19 @@ public:
                     #version 410 core
                     out vec4 outColor;
                     in vec3 vpos;
-
+                    in vec2 uvs;
+                    uniform float mixVal=0.2;
+                    uniform sampler2D bananaTex;
+                    uniform sampler2D pirateTex;
                     void main()
                     {
-                        outColor = vec4(vpos,1.0);
+                       // outColor = vec4(vpos,1.0);
+                        outColor = mix(texture(bananaTex,uvs),mix(texture(pirateTex,uvs),vec4(vpos,1.0),0.3),mixVal);
                     }
                       )";
 
         m_shader = std::make_shared<graphics::Shader>(vertexShader, fragShader);
-        m_RectPos=glm::vec2(0.f);
+        m_RectPos = glm::vec2(0.f);
         m_RectSize = glm::vec2(1.f);
     }
 
@@ -115,28 +137,28 @@ public:
         model = glm::translate(model, { m_RectPos.x,m_RectPos.y,0.f });
         model = glm::scale(model, { m_RectSize.x,m_RectSize.y,0.f });
         m_shader->setUniformMat4("model",model);
+        m_shader->setUniformFloat("mixVal", mixVal);
     }
 
     void render()   override
     {
-        auto rendercmd = std::make_unique<graphics::rendercommands::RenderMesh>(m_mesh, m_shader);
-        Engine::Instance().getRenderManager().submit(std::move(rendercmd));
-        Engine::Instance().getRenderManager().flush();
+        auto texs = graphics::multipleTexures({ m_BananaTex,m_ContTex });
+        Engine::Instance().getRenderManager().submit(BANANA_SUBMIT_RC(RenderMultiTexturedMesh, m_mesh, texs,m_shader));
     }
 
     void imguiRender()  override
     {
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
-        if (ImGui::Begin("Rect Pos"))
+        if (ImGui::Begin("Rect"))
         {
-            ImGui::DragFloat2("Rect Pos X", glm::value_ptr(m_RectPos), 0.01f);
+            ImGui::DragFloat2("Rect Pos ", glm::value_ptr(m_RectPos), 0.01f);
+            ImGui::DragFloat2("Rect Size", glm::value_ptr(m_RectSize), 0.01f);
         }
         ImGui::End();
-
-        if (ImGui::Begin("Rect Size"))
+        if (ImGui::Begin("Textures blend"))
         {
-            ImGui::DragFloat2("Rect Pos Y", glm::value_ptr(m_RectSize), 0.01f);
+            ImGui::DragFloat("Texture blend val", &mixVal, 0.01f,0.f,1.f);
         }
         ImGui::End();
 

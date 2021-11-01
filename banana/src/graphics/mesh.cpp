@@ -39,6 +39,25 @@ namespace banana::graphics
 
 		glBindVertexArray(0);
 	}
+
+	Mesh::Mesh(float* vertexArray, uint32_t vertexCount, uint32_t dimensions, float* texcoords, uint32_t* elementArray, uint32_t elementCount)
+		:Mesh(vertexArray, vertexCount, dimensions,elementArray,elementCount) 
+	{
+		glBindVertexArray(m_Vao);
+
+		glGenBuffers(1, &m_TexcoordsVbo);
+		glBindBuffer(GL_ARRAY_BUFFER, m_TexcoordsVbo);
+
+		glBufferData(GL_ARRAY_BUFFER, vertexCount * 2 * sizeof(float), texcoords, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+		glBindVertexArray(0);
+	}
+
 	Mesh::~Mesh()
 	{
 		glDeleteBuffers(1, &m_PositionVbo);
