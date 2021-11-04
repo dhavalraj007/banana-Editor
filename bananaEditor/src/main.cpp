@@ -5,7 +5,7 @@
 #include"banana/main.h"
 #include"banana/log.h"
 
-#include"banana/graphics/mesh.h"
+#include"banana/graphics/vertex.h"
 #include"banana/graphics/shader.h"
 #include"banana/graphics/texture.h"
 #include"banana/graphics/framebuffer.h"
@@ -32,11 +32,10 @@ public:
     float mixVal = 0.2f;
     glm::vec2 m_RectPos, m_RectSize;
 
-    std::shared_ptr<graphics::Mesh> m_mesh;
     std::shared_ptr<graphics::Shader> m_shader;
     std::shared_ptr<graphics::Texture> m_BananaTex;
     std::shared_ptr<graphics::Texture> m_ContTex;
-    
+    std::shared_ptr<graphics::VertexArray> m_Va;
 
     core::WindowProperties getWindowProperties()
     {
@@ -51,41 +50,48 @@ public:
 
     void initialize() override
     {
-        //Test Mesh
-        float vertices[] = {
-             0.5f,  0.5f, 0.f,      //top right
-             0.5f, -0.5f, 0.f,      //bottom right
-            -0.5f, -0.5f, 0.f,       //bottom left
-            -0.5f,  0.5f, 0.f      //top left
-        };
-        uint32_t elements[] = {
-            0, 1, 3,
-            3, 1, 2
-        };
-        float texcoords[] = {
-            1.f,1.f,
-            1.f,0.f,
-            0.f,0.f,
-            0.f,1.f
-        };
-
 
         m_BananaTex = std::make_shared<graphics::Texture>("bananaTex", "./res/banana.png", 0);
         m_ContTex = std::make_shared<graphics::Texture>("pirateTex", "./res/pirate.png", 1);
-        m_mesh = std::make_shared<graphics::Mesh>(vertices, 4, 3,texcoords, elements, 6);
+        m_Va = std::make_shared<graphics::VertexArray>();
+        {
+            BANANA_CRETE_VERTEX_BUFFER(vb, float);
+            vb->pushVertex({ 0.5f,  0.5f, 0.f , 1.f,1.f,1.f});
+            vb->pushVertex({ 0.5f, -0.5f, 0.f , 1.f,0.f,1.f});
+            vb->pushVertex({ -0.5f,-0.5f, 0.f ,0.f,1.f,1.f});
+            vb->pushVertex({ -0.5f, 0.5f, 0.f ,0.f,1.f,0.f});
+            vb->setLayout({ 3,3 });
+            vb->upload(false);
+            m_Va->pushBuffer(std::move(vb));
+        }
+        {
+            BANANA_CRETE_VERTEX_BUFFER(vb, short);
+            vb->pushVertex({ 1,1 });
+            vb->pushVertex({ 1,0 });
+            vb->pushVertex({ 0,0 });
+            vb->pushVertex({ 0,1 });
+            vb->setLayout({ 2 });
+            vb->upload(false);
+            m_Va->pushBuffer(std::move(vb));
+        }
+        m_Va->setElements({ 0, 1, 3, 3, 1, 2 });
+        m_Va->upload();
         //Test Shader
 
         const char* vertexShader = R"(
                     #version 410 core
                     layout (location = 0) in vec3 position;
-                    layout (location = 1) in vec2 tex;
+                    layout (location = 1) in vec3 color;
+                    layout (location = 2) in vec2 tex;
                     out vec3 vpos;
+                    out vec3 col;
                     out vec2 uvs;
                     uniform vec2 offset = vec2(0.5);
                     uniform mat4 model = mat4(1.0);
                     
                     void main()
                     {
+                        col = color;
                         uvs = tex;
                         vpos = position + vec3(offset,0.0);
                         gl_Position = model * vec4(position,1.0);
@@ -97,13 +103,14 @@ public:
                     out vec4 outColor;
                     in vec3 vpos;
                     in vec2 uvs;
+                    in vec3 col;
                     uniform float mixVal=0.2;
                     uniform sampler2D bananaTex;
                     uniform sampler2D pirateTex;
                     void main()
                     {
                        // outColor = vec4(vpos,1.0);
-                        outColor = mix(texture(bananaTex,uvs),mix(texture(pirateTex,uvs),vec4(vpos,1.0),0.3),mixVal);
+                        outColor = mix(texture(bananaTex,uvs),mix(texture(pirateTex,uvs),vec4(vpos,1.0),0.3),mixVal) + vec4(col,1.0);
                     }
                       )";
 
@@ -143,7 +150,7 @@ public:
     void render()   override
     {
         auto texs = graphics::multipleTexures({ m_BananaTex,m_ContTex });
-        Engine::Instance().getRenderManager().submit(BANANA_SUBMIT_RC(RenderMultiTexturedMesh, m_mesh, texs,m_shader));
+        Engine::Instance().getRenderManager().submit(BANANA_SUBMIT_RC(RenderMultiTexturedVertexArray, m_Va, texs,m_shader));
     }
 
     void imguiRender()  override

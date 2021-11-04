@@ -1,14 +1,14 @@
 #pragma once
 #include"external/glm/glm.hpp"
 #include<memory>
-#include"banana/graphics/mesh.h"
+#include"banana/graphics/vertex.h"
 #include"banana/graphics/shader.h"
 
 class GameObject
 {
 public:
-	GameObject(std::shared_ptr<banana::graphics::Mesh> mesh,std::shared_ptr<banana::graphics::Shader> shader,const glm::vec2& pos,const glm::vec2& size)
-		:m_Mesh(mesh)
+	GameObject(std::shared_ptr<banana::graphics::VertexArray> va,std::shared_ptr<banana::graphics::Shader> shader,const glm::vec2& pos,const glm::vec2& size)
+		:m_va(va)
 		,m_Shader(shader)
 		,m_Pos(pos)
 		,m_Size(size)
@@ -24,7 +24,7 @@ public:
 	virtual void Update();
 	virtual void Render();
 private:
-	std::shared_ptr<banana::graphics::Mesh> m_Mesh;
+	std::shared_ptr<banana::graphics::VertexArray> m_va;
 	std::shared_ptr<banana::graphics::Shader> m_Shader;
 
 	glm::vec2 m_Pos;

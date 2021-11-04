@@ -3,17 +3,16 @@
 #include"gameObjects/gameobject.h"
 #include"gameObjects/ball.h"
 #include<memory>
+#include"banana/graphics/vertex.h"
 
 namespace factory
 {
     // Mesh
-    static float vertices[] = {
-         0.5f,  0.5f, 0.f,      //top right
-         0.5f, -0.5f, 0.f,      //bottom right
-        -0.5f, -0.5f, 0.f,       //bottom left
-        -0.5f,  0.5f, 0.f      //top left
-    };
-    static uint32_t elements[] = {
+    static std::vector<float> vertex1{ 0.5f,  0.5f, 0.f };    //top right
+    static std::vector<float> vertex2{ 0.5f,  -0.5f, 0.f };   //bottom right
+    static std::vector<float> vertex3{ -0.5f, -0.5f, 0.f };  //bottom left
+    static std::vector<float> vertex4{ -0.5f,  0.5f, 0.f };  //top left
+    static std::vector<uint32_t> elements{
         0, 1, 3,
         3, 1, 2
     };
@@ -106,30 +105,58 @@ namespace factory
                         )";
     std::shared_ptr<GameObject> createPaddle(const glm::vec2& Pos)
     {
-        std::shared_ptr<banana::graphics::Mesh> mesh=std::make_shared<banana::graphics::Mesh>(vertices,4,3,elements,6);
+        BANANA_CRETE_VERTEX_BUFFER(vb, float);
+        vb->pushVertex( vertex1 );
+        vb->pushVertex( vertex2 );
+        vb->pushVertex( vertex3 );
+        vb->pushVertex( vertex4 );
+        vb->setLayout({3});
+        std::shared_ptr<banana::graphics::VertexArray> va=std::make_shared<banana::graphics::VertexArray>();
+        va->pushBuffer(std::move(vb));
+        va->setElements(elements);
+        va->upload();
         std::shared_ptr<banana::graphics::Shader> shader=std::make_shared<banana::graphics::Shader>(vertexShader,fragShader);
         glm::vec2 size{ 0.1f,0.3f };
-        auto pad = std::make_shared<GameObject>(mesh, shader, Pos,size);
+        auto pad = std::make_shared<GameObject>(va, shader, Pos,size);
         return pad;
     }
 
     std::shared_ptr<Ball> createBall(const glm::vec2& Pos)
     {
-        std::shared_ptr<banana::graphics::Mesh> mesh = std::make_shared<banana::graphics::Mesh>(vertices, 4, 3, elements, 6);
+
+        BANANA_CRETE_VERTEX_BUFFER(vb, float);
+        vb->pushVertex(vertex1);
+        vb->pushVertex(vertex2);
+        vb->pushVertex(vertex3);
+        vb->pushVertex(vertex4);
+        vb->setLayout({ 3 });
+        std::shared_ptr<banana::graphics::VertexArray> va = std::make_shared<banana::graphics::VertexArray>();
+        va->pushBuffer(std::move(vb));
+        va->setElements(elements);
+        va->upload();
         std::shared_ptr<banana::graphics::Shader> shader = std::make_shared<banana::graphics::Shader>(vertexShader, ballFragShader);
         glm::vec2 size{ 0.075f,0.1f };
-        auto pad = std::make_shared<Ball>(mesh, shader, Pos, size);
+        auto pad = std::make_shared<Ball>(va, shader, Pos, size);
         return pad;
     }
 
     std::shared_ptr<GameObject> createBG()
     {
-        std::shared_ptr<banana::graphics::Mesh> mesh = std::make_shared<banana::graphics::Mesh>(vertices, 4, 3, elements, 6);
+        BANANA_CRETE_VERTEX_BUFFER(vb, float);
+        vb->pushVertex(vertex1);
+        vb->pushVertex(vertex2);
+        vb->pushVertex(vertex3);
+        vb->pushVertex(vertex4);
+        vb->setLayout({ 3 });
+        std::shared_ptr<banana::graphics::VertexArray> va = std::make_shared<banana::graphics::VertexArray>();
+        va->pushBuffer(std::move(vb));
+        va->setElements(elements);
+        va->upload();
         std::shared_ptr<banana::graphics::Shader> shader = std::make_shared<banana::graphics::Shader>(vertexShader, BGfragShader);
        
         glm::vec2 pos{ 0.f,0.f };
         glm::vec2 size{ 2.f,3.f };
-        auto pad = std::make_shared<GameObject>(mesh, shader, pos, size);
+        auto pad = std::make_shared<GameObject>(va, shader, pos, size);
         return pad;
     }
 }

@@ -4,8 +4,8 @@
 class Ball : public GameObject
 {
 public:
-	Ball(std::shared_ptr<banana::graphics::Mesh> mesh, std::shared_ptr<banana::graphics::Shader> shader, const glm::vec2& pos, const glm::vec2& size)
-		:GameObject(mesh,shader,pos,size)
+	Ball(std::shared_ptr<banana::graphics::VertexArray> va, std::shared_ptr<banana::graphics::Shader> shader, const glm::vec2& pos, const glm::vec2& size)
+		:GameObject(va,shader,pos,size)
 		,m_Vel(0.f)
 	{}
 	

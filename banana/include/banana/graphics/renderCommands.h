@@ -4,7 +4,7 @@
 
 namespace banana::graphics
 {
-	class Mesh;
+	class VertexArray;
 	class Texture;
 	class Shader;
 	class Framebuffer;
@@ -20,46 +20,47 @@ namespace banana::graphics
 			virtual ~RenderCommand() {}
 		};
 		 
-		class RenderMesh :public RenderCommand
+		class RenderVertexArray:public RenderCommand
 		{
 		public:
-			RenderMesh(std::weak_ptr<Mesh> mesh, std::weak_ptr<Shader> shader)
-			:m_Mesh(mesh),m_Shader(shader)
+			RenderVertexArray(std::weak_ptr<VertexArray> va, std::weak_ptr<Shader> shader)
+				:m_Va(va), m_Shader(shader)
 			{}
 
 			virtual void execute() override;
 		private:
-			std::weak_ptr<Mesh> m_Mesh;
+			std::weak_ptr<VertexArray> m_Va;
 			std::weak_ptr<Shader> m_Shader;
 		};
 
-		class RenderTexturedMesh :public RenderCommand
+		class RenderTexturedVertexArray:public RenderCommand
 		{
 		public:
-			RenderTexturedMesh(std::weak_ptr<Mesh> mesh, std::weak_ptr<Texture> texture, std::weak_ptr<Shader> shader)
-				:m_Mesh(mesh)
+			RenderTexturedVertexArray(std::weak_ptr<VertexArray> va, std::weak_ptr<Texture> texture, std::weak_ptr<Shader> shader)
+				:m_Va(va)
 				, m_Texture(texture)
-				, m_Shader(shader)		
+				, m_Shader(shader)
 			{}
 
 			virtual void execute() override;
 		private:
-			std::weak_ptr<Mesh> m_Mesh;
+			std::weak_ptr<VertexArray> m_Va;
 			std::weak_ptr<Texture> m_Texture;
 			std::weak_ptr<Shader> m_Shader;
 		};
-		class RenderMultiTexturedMesh :public RenderCommand
+
+		class RenderMultiTexturedVertexArray :public RenderCommand
 		{
 		public:
-			RenderMultiTexturedMesh(std::weak_ptr<Mesh> mesh, const std::vector<std::weak_ptr<Texture>>& textures, std::weak_ptr<Shader> shader)
-				:m_Mesh(mesh)
+			RenderMultiTexturedVertexArray(std::weak_ptr<VertexArray> va, const std::vector<std::weak_ptr<Texture>>& textures, std::weak_ptr<Shader> shader)
+				:m_Va(va)
 				, m_Textures(textures)
-				, m_Shader(shader)		
+				, m_Shader(shader)
 			{}
 
 			virtual void execute() override;
 		private:
-			std::weak_ptr<Mesh> m_Mesh;
+			std::weak_ptr<VertexArray> m_Va;
 			std::vector<std::weak_ptr<Texture>> m_Textures;
 			std::weak_ptr<Shader> m_Shader;
 		};

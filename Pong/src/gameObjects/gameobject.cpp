@@ -19,5 +19,5 @@ void GameObject::Update()
 void GameObject::Render()
 {
 	
-	banana::Engine::Instance().getRenderManager().submit(BANANA_SUBMIT_RC(RenderMesh, m_Mesh, m_Shader));
+	banana::Engine::Instance().getRenderManager().submit(BANANA_SUBMIT_RC(RenderVertexArray, m_va, m_Shader));
 }

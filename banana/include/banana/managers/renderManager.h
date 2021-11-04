@@ -5,7 +5,7 @@
 #include<stack>
 
 #define BANANA_SUBMIT_RC(cmdtype,...) std::move(std::make_unique<banana::graphics::rendercommands::cmdtype>(__VA_ARGS__))
-
+#define BANANA_CRETE_VERTEX_BUFFER(name,type) std::unique_ptr<banana::graphics::VertexBuffer<type>> name = std::make_unique<banana::graphics::VertexBuffer<type>>();
 
 namespace banana::managers
 {

@@ -4,7 +4,7 @@
 #include<algorithm>
 #include<vector>
 
-#include"banana/graphics/mesh.h"
+#include"banana/graphics/vertex.h"
 #include"banana/graphics/texture.h"
 #include"banana/graphics/shader.h"
 #include"banana/graphics/framebuffer.h"
@@ -23,104 +23,120 @@ namespace banana::graphics
 
 namespace banana::graphics::rendercommands
 {
-	void RenderMesh::execute()
+
+	void RenderVertexArray::execute()
 	{
-		std::shared_ptr<Mesh> mesh = m_Mesh.lock();
+		std::shared_ptr<VertexArray> va = m_Va.lock();
 		std::shared_ptr<Shader> shader = m_Shader.lock();
-
-		if (mesh && shader)
+		
+		if (va && shader)
 		{
-			mesh->bind();
-			shader->bind();
 
-			if (mesh->getElementCount() > 0)
-			{ 
-				glDrawElements(GL_TRIANGLES, mesh->getElementCount(), GL_UNSIGNED_INT, 0);
-			}
-			else
+			BANANA_ASSERT(va->isValid(), "Attempting to Call Invalid RenderVertexArray with invalid VertexArray. - did you Upload the VertexArray ?");
+			if (va->isValid())
 			{
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, mesh->getVertexCount());
-			}
+				va->bind();
+				shader->bind();
 
-			shader->unbind();
-			mesh->unbind();
+				if (va->getElementCount() > 0)
+				{
+					glDrawElements(GL_TRIANGLES, va->getElementCount(), GL_UNSIGNED_INT, 0);
+				}
+				else
+				{
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, va->getVertexCount());
+				}
+
+				shader->unbind();
+				va->unbind();
+			}
 		}
 		else
 		{
-			BANANA_WARN("Attempting execute RenderMesh with invalid data");
+			BANANA_WARN("Attempting execute RenderVertexArray with invalid data");
 		}
 	}
 
-	void RenderTexturedMesh::execute()
+	void RenderTexturedVertexArray::execute()
 	{
-		std::shared_ptr<Mesh> mesh = m_Mesh.lock();
+		std::shared_ptr<VertexArray> va = m_Va.lock();
 		std::shared_ptr<Texture> texture = m_Texture.lock();
 		std::shared_ptr<Shader> shader = m_Shader.lock();
 
-		if (mesh && texture && shader)
+		if (va && texture && shader)
 		{
-			mesh->bind();
-			texture->bind();
-			shader->bind();
-			shader->setUniformInt(texture->getName(),texture->getTexUnit());
-			if (mesh->getElementCount() > 0)
+			BANANA_ASSERT(va->isValid(), "Attempting to Call Invalid RenderTexturedVertexArray with invalid VertexArray. - did you Upload the VertexArray ?");
+			if (va->isValid())
 			{
-				glDrawElements(GL_TRIANGLES, mesh->getElementCount(), GL_UNSIGNED_INT, 0);
-			}
-			else
-			{
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, mesh->getVertexCount());
-			}
+				va->bind();
+				texture->bind();
+				shader->bind();
+				shader->setUniformInt(texture->getName(), texture->getTexUnit());
+				if (va->getElementCount() > 0)
+				{
+					glDrawElements(GL_TRIANGLES, va->getElementCount(), GL_UNSIGNED_INT, 0);
+				}
+				else
+				{
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, va->getVertexCount());
+				}
 
-			shader->unbind();
-			texture->unbind();
-			mesh->unbind();
+				shader->unbind();
+				texture->unbind();
+				va->unbind();
+			}
+	 
 		}
 		else
 		{
-			BANANA_WARN("Attempting execute RenderMesh with invalid data");
+			BANANA_WARN("Attempting execute RenderTexturedVertexArray with invalid data");
 		}
 	}
-	void RenderMultiTexturedMesh::execute()
+	void RenderMultiTexturedVertexArray::execute()
 	{
-		std::shared_ptr<Mesh> mesh = m_Mesh.lock();
+		std::shared_ptr<VertexArray> va = m_Va.lock();
 		std::vector<std::shared_ptr<Texture>> sTextures;
 		std::for_each(begin(m_Textures), end(m_Textures),
-			[&sTextures](auto&& wtextures)																	{ sTextures.emplace_back(wtextures.lock()); }
+			[&sTextures](auto&& wtextures) { sTextures.emplace_back(wtextures.lock()); }
 		);
 		std::shared_ptr<Shader> shader = m_Shader.lock();
-		bool tex_alive = std::all_of(begin(sTextures), end(sTextures), [](auto&& tex) { return tex; });
-		if (mesh && tex_alive && shader)
-		{
-			mesh->bind();
-			shader->bind();
-			std::for_each(begin(sTextures), end(sTextures),
-			[&shader](auto&& stex) 
-			{ 
-				stex->bind();
-				shader->setUniformInt(stex->getName(), stex->getTexUnit());
-				} );
-			
-			if (mesh->getElementCount() > 0)
-			{
-				glDrawElements(GL_TRIANGLES, mesh->getElementCount(), GL_UNSIGNED_INT, 0);
-			}
-			else
-			{
-				glDrawArrays(GL_TRIANGLE_STRIP, 0, mesh->getVertexCount());
-			}
 
-			shader->unbind();
-			std::for_each(begin(sTextures), end(sTextures),
-				[&shader](auto&& stex)
+		bool tex_alive = std::all_of(begin(sTextures), end(sTextures), [](auto&& tex) { return tex; });
+		if (va && tex_alive && shader)
+		{
+			BANANA_ASSERT(va->isValid(), "Attempting to Call Invalid RenderMultiTexturedVertexArray with invalid VertexArray. - did you Upload the VertexArray ?");
+			if (va->isValid())
+			{
+				va->bind();
+				shader->bind();
+				std::for_each(begin(sTextures), end(sTextures),
+					[&shader](auto&& stex)
+					{
+						stex->bind();
+						shader->setUniformInt(stex->getName(), stex->getTexUnit());
+					});
+
+				if (va->getElementCount() > 0)
 				{
-					stex->unbind();
-				});
-			mesh->unbind();
+					glDrawElements(GL_TRIANGLES, va->getElementCount(), GL_UNSIGNED_INT, 0);
+				}
+				else
+				{
+					glDrawArrays(GL_TRIANGLE_STRIP, 0, va->getVertexCount());
+				}
+
+				shader->unbind();
+				std::for_each(begin(sTextures), end(sTextures),
+					[&shader](auto&& stex)
+					{
+						stex->unbind();
+					});
+				va->unbind();
+			}
 		}
 		else
 		{
-			BANANA_WARN("Attempting execute RenderMesh with invalid data");
+			BANANA_WARN("Attempting execute RenderMultiTexturedVertexArray with invalid data");
 		}
 	}
 
@@ -142,6 +158,4 @@ namespace banana::graphics::rendercommands
 		Engine::Instance().getRenderManager().popFramebuffer();
 
 	}
-	
-	
 }
