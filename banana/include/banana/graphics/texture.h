@@ -17,6 +17,7 @@ namespace banana::graphics
 		~Texture();
 
 		inline std::string getName() const { return m_Name; }
+		inline std::string getPath() const { return m_Path; }
 		inline uint32_t getId() const { return m_Id; }
 		inline uint32_t getWidth() const { return m_Width; }
 		inline uint32_t getHeight() const { return m_Height; }
@@ -24,6 +25,7 @@ namespace banana::graphics
 		inline TextureFiltering getFilter() const { return m_Filter; }
 		inline int getTexUnit() const { return m_TexUnit; }
 
+		void setName(const std::string& name) { m_Name = name; }
 		void setTexUnit(int texUnit) { m_TexUnit = texUnit; }
 		void setFilter(TextureFiltering filter);
 

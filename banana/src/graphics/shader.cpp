@@ -6,7 +6,9 @@
 
 namespace banana::graphics
 {
-	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)		// creates shader program from shader source
+	Shader::Shader(const std::string& vertexSource, const std::string& fragmentSource)
+		:m_VertexSource(vertexSource)
+		,m_FragmentSource(fragmentSource)
 	{
 		m_ProgramId = glCreateProgram();	BANANA_CHECK_GL_ERROR
 

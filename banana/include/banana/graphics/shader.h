@@ -15,6 +15,9 @@ namespace banana::graphics
 		void bind();
 		void unbind();
 
+		inline const std::string& getVertexShaderSource() const { return m_VertexSource; }
+		inline const std::string& getFragmentShaderSource() const { return m_FragmentSource; }
+
 		void setUniformInt(const std::string& name, int val);
 		void setUniformFloat(const std::string& name, float val);
 		void setUniformFloat2(const std::string& name, float val1,float val2);
@@ -28,6 +31,9 @@ namespace banana::graphics
 	private:
 		int getUniformLocation(const std::string& name);
 	private:
+		std::string m_VertexSource;
+		std::string m_FragmentSource;
+
 		uint32_t m_ProgramId;
 		std::unordered_map<std::string, int> m_uniformLocations;
 	};
