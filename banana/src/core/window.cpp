@@ -210,7 +210,8 @@ namespace banana::core
 
 		BANANA_ASSERT(m_ScreenVa->isValid(), "Invalid VertexArray. - did you called upload onm vertexAray?");
 		m_ScreenVa->bind();
-		//glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
+		glActiveTexture(GL_TEXTURE0 + 0);
 		glBindTexture(GL_TEXTURE_2D, m_Framebuffer->getTextureId());
 		m_ScreenShader->bind();
 		glm::vec2 scale = m_FramebufferSize / (glm::vec2)getSize();

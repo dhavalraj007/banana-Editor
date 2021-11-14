@@ -1,6 +1,7 @@
 #pragma once
 
 #include<string>
+#include"banana/log.h"
 
 namespace banana::graphics
 {
@@ -26,7 +27,11 @@ namespace banana::graphics
 		inline int getTexUnit() const { return m_TexUnit; }
 
 		void setName(const std::string& name) { m_Name = name; }
-		void setTexUnit(int texUnit) { m_TexUnit = texUnit; }
+		void setTexUnit(int texUnit)
+		{
+			BANANA_ASSERT(m_TexUnit > 0, "Texture Unit 0 is not available for User acess. - please use texture units >= 1");
+			m_TexUnit = texUnit;
+		}
 		void setFilter(TextureFiltering filter);
 
 		void bind();

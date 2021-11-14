@@ -15,6 +15,7 @@ banana::graphics::Texture::Texture(const std::string& name, const std::string& p
 	,m_Filter(TextureFiltering::Linear)
 	,m_TexUnit(texUnit)
 {
+	BANANA_ASSERT(m_TexUnit > 0, "Texture Unit 0 is not available for User acess. - please use texture units >= 1");
 	int width, height, numOfChannels;
 	stbi_set_flip_vertically_on_load(1);
 	m_Pixels = stbi_load(path.c_str(), &width, &height, &numOfChannels, 0);

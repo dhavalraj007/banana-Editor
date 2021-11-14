@@ -429,16 +429,16 @@ public:
 
 		//Textures
 		{
-			std::shared_ptr<graphics::Texture> BananaTex = std::make_shared<graphics::Texture>("bananaTex", "./res/banana.png", 0);
+			std::shared_ptr<graphics::Texture> BananaTex = std::make_shared<graphics::Texture>("bananaTex", "./res/banana.png", 1);
 			m_texLibrary.load("bananaLogo", BananaTex);
 		}
 
 		{
-			std::shared_ptr<graphics::Texture> pirateTex = std::make_shared<graphics::Texture>("pirateTex", "./res/pirate.png", 1);
+			std::shared_ptr<graphics::Texture> pirateTex = std::make_shared<graphics::Texture>("pirateTex", "./res/pirate.png", 2);
 			m_texLibrary.load("pirate", pirateTex);
 		}
 		{
-			std::shared_ptr<graphics::Texture> contTex = std::make_shared<graphics::Texture>("contTex", "./res/container.jpg", 2);
+			std::shared_ptr<graphics::Texture> contTex = std::make_shared<graphics::Texture>("contTex", "./res/container.jpg", 3);
 			m_texLibrary.load("container", contTex);
 		}
 	}
