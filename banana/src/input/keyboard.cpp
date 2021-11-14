@@ -17,8 +17,8 @@ namespace banana::input
 
 	void Keyboard::update()
 	{
-		const Uint8* state = SDL_GetKeyboardState(nullptr);
 		keysLast = keys;
+		const Uint8* state = SDL_GetKeyboardState(nullptr);
 		for (int i = BANANA_INPUT_KEY_FIRST; i < keyCount; i++)
 		{
 			keys[i] = state[i];
@@ -39,7 +39,7 @@ namespace banana::input
 		BANANA_ASSERT(key >= BANANA_INPUT_KEY_FIRST && key < keyCount, "Invalid Keyboard key!");
 		if (key >= BANANA_INPUT_KEY_FIRST && key < keyCount)
 		{
-			return !keysLast[key] && keys[key];
+			return   keys[key] && !keysLast[key];
 		}
 		return false;
 	}

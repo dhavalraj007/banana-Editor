@@ -31,6 +31,7 @@ namespace banana::graphics
 		{
 			m_Stride += count;
 		}
+		m_IsLayoutSet = true;
 	}
 
 	void RawVertexBuffer::upload(bool dynamic)

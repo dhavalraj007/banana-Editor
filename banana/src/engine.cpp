@@ -84,6 +84,11 @@ namespace banana
         }  
     }
 
+    uint32_t Engine::getInitTime()
+    {
+        return SDL_GetTicks();
+    }
+
     void Engine::shutdown()
     {
         m_isRunning = false;
@@ -105,7 +110,6 @@ namespace banana
 
     void Engine::update()
     {
-        m_Window.pumpEvents();
         m_App->update();
     }
 

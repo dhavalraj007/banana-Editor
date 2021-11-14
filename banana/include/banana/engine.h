@@ -22,7 +22,7 @@ namespace banana
         inline App& getApp() { return *m_App; }
         inline core::Window& getWindow() { return m_Window; }
         inline managers::RenderManager& getRenderManager() { return m_RenderManager; }
-
+        uint32_t getInitTime();
         Engine(Engine&) = delete;
         Engine operator=(Engine&) = delete;
     

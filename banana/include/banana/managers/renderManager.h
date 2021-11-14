@@ -11,12 +11,15 @@ namespace banana::managers
 {
 	class RenderManager
 	{
-
 		friend class graphics::rendercommands::PushFramebuffer;
 		friend class graphics::rendercommands::PopFramebuffer;
+		friend class graphics::rendercommands::PushCamera;
+		friend class graphics::rendercommands::PopCamera;
 	public:
 		RenderManager() {}
 		~RenderManager() {}
+
+		const graphics::Camera2D* getActiveCamera() const;
 
 		void initialize();
 		void shutdown();
@@ -34,9 +37,13 @@ namespace banana::managers
 	private:
 		std::queue<std::unique_ptr<graphics::rendercommands::RenderCommand>> m_RenderCommands;
 		std::stack<std::shared_ptr<graphics::Framebuffer>> m_FrameBuffers;
+		std::stack<std::shared_ptr<graphics::Camera2D>> m_Cameras;
 		
 		// no one can call these execpt graphics::rendercommands::PushFramebuffer and PopFramebuffer
 		void pushFrameBuffer(std::shared_ptr<graphics::Framebuffer> framebuffer);		
 		void popFramebuffer();
+
+		void pushCamera(std::shared_ptr<graphics::Camera2D> camera);		
+		void popCamera();
 	};
 }

@@ -8,6 +8,7 @@ namespace banana::graphics
 	class Texture;
 	class Shader;
 	class Framebuffer;
+	class Camera2D;
 
 	std::vector<std::weak_ptr<Texture>> multipleTexures(std::initializer_list<std::shared_ptr<Texture>> sTexs);
 
@@ -78,6 +79,22 @@ namespace banana::graphics
 		{
 		public:
 			PopFramebuffer(){}
+			virtual void execute() override;
+		};
+
+		class PushCamera :public RenderCommand
+		{
+		public:
+			PushCamera(std::weak_ptr<Camera2D> camera) :m_Camera(camera) {}
+			virtual void execute() override;
+		private:
+			std::weak_ptr<Camera2D> m_Camera;
+		};
+
+		class PopCamera :public RenderCommand
+		{
+		public:
+			PopCamera() {}
 			virtual void execute() override;
 		};
 	}

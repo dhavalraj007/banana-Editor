@@ -8,11 +8,13 @@
 #include"banana/graphics/texture.h"
 #include"banana/graphics/shader.h"
 #include"banana/graphics/framebuffer.h"
+#include"banana/graphics/camera.h"
 
 #include"glad/glad.h"
 
 namespace banana::graphics
 {
+	//convert vec of shared ptr to Texture into weak_ptr to Texture
 	std::vector<std::weak_ptr<Texture>> banana::graphics::multipleTexures(std::initializer_list<std::shared_ptr<Texture>> sTexs)
 	{
 		std::vector<std::weak_ptr<Texture>> ret(sTexs.size(), std::weak_ptr<Texture>());
@@ -37,6 +39,15 @@ namespace banana::graphics::rendercommands
 			{
 				va->bind();
 				shader->bind();
+
+				const auto& rm = Engine::Instance().getRenderManager();
+				const auto& cam = rm.getActiveCamera();
+				
+				if (cam)
+				{
+					shader->setUniformMat4("proj", cam->getProjectionMatrix());
+					shader->setUniformMat4("view", cam->getViewMatrix());
+				}
 
 				if (va->getElementCount() > 0)
 				{
@@ -71,14 +82,25 @@ namespace banana::graphics::rendercommands
 				va->bind();
 				texture->bind();
 				shader->bind();
+
+				const auto& rm = Engine::Instance().getRenderManager();
+				const auto& cam = rm.getActiveCamera();
+
+				if (cam)
+				{
+					shader->setUniformMat4("proj", cam->getProjectionMatrix());
+					shader->setUniformMat4("view", cam->getViewMatrix());
+
+				}
 				shader->setUniformInt(texture->getName(), texture->getTexUnit());
+
 				if (va->getElementCount() > 0)
 				{
 					glDrawElements(GL_TRIANGLES, va->getElementCount(), GL_UNSIGNED_INT, 0);
 				}
 				else
 				{
-					glDrawArrays(GL_TRIANGLE_STRIP, 0, va->getVertexCount());
+					glDrawArrays(GL_TRIANGLES, 0, va->getVertexCount());
 				}
 
 				shader->unbind();
@@ -109,6 +131,17 @@ namespace banana::graphics::rendercommands
 			{
 				va->bind();
 				shader->bind();
+
+				const auto& rm = Engine::Instance().getRenderManager();
+				const auto& cam = rm.getActiveCamera();
+
+				if (cam)
+				{
+					shader->setUniformMat4("proj", cam->getProjectionMatrix());
+					shader->setUniformMat4("view", cam->getViewMatrix());
+				}
+
+
 				std::for_each(begin(sTextures), end(sTextures),
 					[&shader](auto&& stex)
 					{
@@ -157,5 +190,23 @@ namespace banana::graphics::rendercommands
 	{
 		Engine::Instance().getRenderManager().popFramebuffer();
 
+	}
+
+	void PushCamera::execute()
+	{
+		std::shared_ptr<Camera2D> camera = m_Camera.lock();
+		if (camera)
+		{
+			Engine::Instance().getRenderManager().pushCamera(camera);
+		}
+		else
+		{
+			BANANA_WARN("Attempting execute PushCamera with invalid data");
+		}
+	}
+
+	void PopCamera::execute()
+	{
+		Engine::Instance().getRenderManager().popCamera();
 	}
 }

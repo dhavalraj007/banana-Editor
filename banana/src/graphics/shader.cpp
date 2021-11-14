@@ -73,8 +73,8 @@ namespace banana::graphics
 
 	Shader::~Shader()
 	{
-		glUseProgram(0);			BANANA_CHECK_GL_ERROR
-		glDeleteProgram(m_ProgramId);		BANANA_CHECK_GL_ERROR
+		glUseProgram(0);			// gl error here prolly related to destruction oreder BANANA_CHECK_GL_ERROR
+		glDeleteProgram(m_ProgramId);		// BANANA_CHECK_GL_ERROR	
 	}
 
 

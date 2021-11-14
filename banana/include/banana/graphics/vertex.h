@@ -41,10 +41,10 @@ namespace banana::graphics
 
 	protected:
 		bool m_IsUploaded = false;
+		bool m_IsLayoutSet = false;
 		uint32_t m_Vbo = 0;
 		uint32_t m_VertexCount = 0;
 		uint32_t m_Stride = 0;
-
 		std::vector<uint32_t> m_Layout;
 		void* m_Data = nullptr;
 		uint32_t m_Size = 0;
@@ -80,6 +80,15 @@ namespace banana::graphics
 		}
 		~VertexBuffer() {}
 
+		void pushVertices(const std::vector<T>& verts)
+		{
+			BANANA_ASSERT(verts.size() > 0, "No value passed in for vertex");
+			BANANA_ASSERT(m_IsLayoutSet, "Layout for vertexBuffer not set.");
+			BANANA_ASSERT(verts.size() % m_Stride == 0, "Vertex data is in consistent with layout!");
+			m_VertexCount =(uint32_t)verts.size() / m_Stride;	
+			m_DataVec.insert(m_DataVec.end(), verts.begin(), verts.end());
+		}
+
 		void pushVertex(const std::vector<T>& vec)
 		{
 			BANANA_ASSERT(vec.size() > 0, "No value passed in for vertex");
@@ -98,6 +107,7 @@ namespace banana::graphics
 		// must setLayout before this call or this wont work
 		void upload(bool dynamic) override
 		{
+			BANANA_ASSERT(m_IsLayoutSet, "Layout for vertexBuffer not set.");
 			m_Stride *= sizeof(T);
 			m_Size = sizeof(T) * (uint32_t)m_DataVec.size();
 			BANANA_TRACE("m_Strid:{} , m_Size:{}", m_Stride, m_Size);

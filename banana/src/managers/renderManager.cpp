@@ -3,12 +3,11 @@
 #include"banana/engine.h"
 #include"glad/glad.h"
 #include"banana/graphics/framebuffer.h"
+#include"banana/graphics/helper.h"
 
 
 namespace banana::managers
 {
-
-
 
 	void RenderManager::initialize()
 	{
@@ -18,8 +17,8 @@ namespace banana::managers
 			(const char*)glGetString(GL_RENDERER),
 			(const char*)glGetString(GL_VERSION));
 
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
+		glEnable(GL_DEPTH_TEST);	BANANA_CHECK_GL_ERROR;
+		glDepthFunc(GL_LEQUAL);	BANANA_CHECK_GL_ERROR;
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -27,8 +26,8 @@ namespace banana::managers
 		setClearColor(
 			{ static_cast<float>(0x64) / static_cast<float>(0xFF),
 			static_cast<float>(0x95) / static_cast<float>(0xFF),
-			static_cast<float>(0xED) / static_cast<float>(0xFF),
-			1 }
+			static_cast<float>(0xED) / static_cast<float>(0xFF), 
+			1 } 
 		);	// cornflower blue default clear color
 	}
 
@@ -48,7 +47,6 @@ namespace banana::managers
 		{
 			m_RenderCommands.pop();
 		}
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	void RenderManager::setViewport(int x, int y, int w, int h)
@@ -92,6 +90,7 @@ namespace banana::managers
 
 	void RenderManager::pushFrameBuffer(std::shared_ptr<graphics::Framebuffer> framebuffer)
 	{
+		BANANA_ASSERT(framebuffer, "framebuffer is null.")
 		m_FrameBuffers.push(framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->getFbo());
 		setViewport(0, 0, framebuffer->getSize().x, framebuffer->getSize().y);
@@ -99,6 +98,8 @@ namespace banana::managers
 		
 		glClearColor(framebuffer->GetClearColor().r, framebuffer->GetClearColor().g, framebuffer->GetClearColor().b, framebuffer->GetClearColor().a);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);	BANANA_CHECK_GL_ERROR;
 	}
 
 	void RenderManager::popFramebuffer()
@@ -111,14 +112,47 @@ namespace banana::managers
 			{
 				auto nextfb = m_FrameBuffers.top();
 				glBindFramebuffer(GL_FRAMEBUFFER, nextfb->getFbo());
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glEnable(GL_DEPTH_TEST);
+				glDepthFunc(GL_LEQUAL);	BANANA_CHECK_GL_ERROR;
 				setViewport(0, 0, nextfb->getSize().x, nextfb->getSize().y);
 			}
 			else
 			{
 				glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+				glEnable(GL_DEPTH_TEST);
+				glDepthFunc(GL_LEQUAL);	BANANA_CHECK_GL_ERROR;
 				auto& window = Engine::Instance().getWindow();
 				setViewport(0, 0, window.getSize().x, window.getSize().y);
 			}
+		}
+	}
+
+
+
+
+	const graphics::Camera2D* RenderManager::getActiveCamera() const 
+	{
+		if (m_Cameras.size() > 0)
+		{
+			return m_Cameras.top().get();
+		}
+		return nullptr;
+	}
+
+	void RenderManager::pushCamera(std::shared_ptr<graphics::Camera2D> camera)
+	{
+		BANANA_ASSERT(camera,"camera is null.")
+		m_Cameras.push(camera);
+	}
+
+	void RenderManager::popCamera()
+	{
+		BANANA_ASSERT(m_Cameras.size() > 0, "RenderManger::popCamera: Empty stack");
+		if (m_Cameras.size() > 0)
+		{
+			m_Cameras.pop();
 		}
 	}
 }
