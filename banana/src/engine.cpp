@@ -72,14 +72,17 @@ namespace banana
         m_App = app;
         if (initialize())       //init engine
         {
-            {
+            float deltaTime, lastFrameTime=0;
+            float currTime;
                 while (m_isRunning)        // core Game Loop
                 {
+                    currTime = SDL_GetTicks()*0.001f;
+                    deltaTime = currTime - lastFrameTime;
+                    lastFrameTime = currTime;
                     m_Window.pumpEvents();
-                    update();
+                    update(deltaTime);
                     render();
                 }
-            }
         shutdown();
         }  
     }
@@ -108,9 +111,9 @@ namespace banana
 
     //private
 
-    void Engine::update()
+    void Engine::update(float deltaTime)
     {
-        m_App->update();
+        m_App->update(deltaTime);
     }
 
 

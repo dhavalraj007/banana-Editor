@@ -12,7 +12,7 @@ namespace banana
 		virtual core::WindowProperties getWindowProperties() { return core::WindowProperties(); }
 		virtual void initialize() {}
 		virtual void shutdown() {}
-		virtual void update() {}
+		virtual void update(float deltatime) {}
 		virtual void render() {}
 		virtual void imguiRender() {}
 

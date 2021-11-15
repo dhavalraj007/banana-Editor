@@ -33,7 +33,7 @@ namespace banana
         [[nodiscard]] bool initialize();         //Initialize/Create Subsystems(logManager,SDL,window,renderManager)
         void getInfo();
         void shutdown();                        //Shutdown Subsystems(renderManger,window,logManager)
-        void update();
+        void update(float deltaTime);
         void render();
 
         //managers

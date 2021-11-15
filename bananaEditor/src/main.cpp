@@ -36,6 +36,7 @@ public:
 	glm::vec2 m_RectPos, m_RectSize;
 	glm::vec3 m_CamPos;
 	float m_CamRot;
+	float m_CamSpeed;
 	
 	std::shared_ptr<graphics::Shader> m_shader;
 	std::shared_ptr<graphics::Texture> m_tex;
@@ -65,8 +66,9 @@ public:
 
 		m_Camera2D = std::make_shared<graphics::Camera2D>();
 		m_Camera2D->setHeight(2.f);
-		m_CamPos = { 0.f,0.f, 3.f };
+		m_CamPos = { 0.f,0.f, 1.f };
 		m_Camera2D->setView(m_CamPos, m_CamRot);
+		m_CamSpeed = 1.0f;
 
 		m_RectPos = glm::vec2(0.f);
 		m_RectSize = glm::vec2(1.f);
@@ -81,14 +83,23 @@ public:
 	{
 	}
 
-	void update()   override
+	void update(float deltaTime)   override
 	{
-		if (input::Keyboard::keyDown(BANANA_INPUT_KEY_F))
+		if (input::Keyboard::keyDown(BANANA_INPUT_KEY_GRAVE))
 		{
 			m_ImguiEnabled = !m_ImguiEnabled;
 			auto& window = Engine::Instance().getWindow();
 			window.setShouldRenderToScreen(!m_ImguiEnabled);
 		}
+		if (input::Keyboard::key(BANANA_INPUT_KEY_RIGHT))
+		{
+			m_CamPos.x += m_CamSpeed*deltaTime;
+		}
+		if (input::Keyboard::key(BANANA_INPUT_KEY_LEFT))
+		{
+			m_CamPos.x -= m_CamSpeed*deltaTime;
+		}
+		m_Camera2D->setView(m_CamPos, m_CamRot);
 
 		glm::mat4 model = glm::mat4(1.f);
 		model = glm::scale(model, { m_RectSize.x,m_RectSize.y,0.f });
