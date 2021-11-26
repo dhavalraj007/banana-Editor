@@ -90,7 +90,7 @@ namespace banana::managers
 
 	void RenderManager::pushFrameBuffer(std::shared_ptr<graphics::Framebuffer> framebuffer)
 	{
-		BANANA_ASSERT(framebuffer, "framebuffer is null.")
+		BANANA_ASSERT(framebuffer, "framebuffer is null.");
 		m_FrameBuffers.push(framebuffer);
 		glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->getFbo());
 		setViewport(0, 0, framebuffer->getSize().x, framebuffer->getSize().y);
@@ -143,7 +143,7 @@ namespace banana::managers
 
 	void RenderManager::pushCamera(std::shared_ptr<graphics::Camera2D> camera)
 	{
-		BANANA_ASSERT(camera,"camera is null.")
+		BANANA_ASSERT(camera, "camera is null.");
 		m_Cameras.push(camera);
 	}
 

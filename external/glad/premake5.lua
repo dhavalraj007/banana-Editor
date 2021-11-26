@@ -1,7 +1,10 @@
+
+Runstatic = "off"
+
 project "glad"
     kind "StaticLib"
     language "C"
-    staticruntime "on"
+    staticruntime(Runstatic)
     
 
     targetdir(tdir)
