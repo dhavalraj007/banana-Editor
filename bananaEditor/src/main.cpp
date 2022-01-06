@@ -70,6 +70,7 @@ public:
     void update()
     {
         BANANA_TRACE("Editor::update");
+        BANANA_TRACE("check");
         int windowW, windowH;
         Engine::Instance().getWindow().getSize(windowW, windowH);
 

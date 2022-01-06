@@ -44,8 +44,8 @@ project "banana"
 
     files
     {
-        "%{prj.name}/include/**.h",     --only this will be exposed to outer projects
-        "%{prj.name}/include/**.cpp",   
+        "%{prj.name}/include/banana/**.h",     --only this will be exposed to outer projects
+        "%{prj.name}/include/banana/**.cpp",   
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
         "%{prj.name}/**.natvis"
